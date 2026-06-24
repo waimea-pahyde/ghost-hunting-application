@@ -1,4 +1,4 @@
-# Flask Project Template
+# Ghost Hunter web app
 
 This is a simple [Flask web app](https://flask.palletsprojects.com/) project, built using [Python](https://www.python.org/), that using a [SQLite database](https://sqlite.org/), and [Jinja2 templates](https://jinja.palletsprojects.com/templates/).
 

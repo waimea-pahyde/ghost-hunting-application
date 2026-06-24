@@ -2,8 +2,7 @@
 
 ## Identified Problem or Need
 
-Replace this text with a clearly stated problem or need that exists that your project will attempt to solve / fulfil.
-
+Local ghost hunters in the Nelson region have a difficult time identifying potentially haunted locations due to our lack of abandoned buildings. 
 
 ## End-User Requirements
 
