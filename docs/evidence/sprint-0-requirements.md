@@ -6,7 +6,6 @@ Local ghost hunters in the Nelson region have a difficult time identifying poten
 
 ## End-User Requirements
 
-Replace this text with a description of your typical end-users and their specific needs / expectations / requirements.
 
 My typical end-users will be ghost hunters who need an easy to use website which shows possible haunted locations in and around their specific locations. 
 
@@ -91,35 +90,34 @@ This means designing for real people.
 
 ### Relevance to the System
 
-Replace this text with an explanation of why the principle is relevant to this particular project. 
+MY website should be intuitive for the people using it, and as such I will need to know 
 
 ### Impact / Considerations
 
-Replace this text with an explanation of what you will need to consider moving forward and how the project will be impacted by this principle.
+To make sure I know my users, I will talk to my end users often and ensure my website matches their specific needs and wants. I will also cross reference my website with the users idea of an ideal website. 
 
+## Clear user flows
 
-## NAME OF UX PRINCIPLE 2
-
-Replace this text with a clear explanation of what the principle means.
+This means considering the amount of steps needed to complete basic tasks and increasing efficiency.
 
 ### Relevance to the System
 
-Replace this text with an explanation of why the principle is relevant to this particular project.
+My website will need to be efficient as possible for my end users to use. It should not take fifty steps to sign up or report a ghost. 
 
 ### Impact / Considerations
 
-Replace this text with an explanation of what you will need to consider moving forward and how the project will be impacted by this principle.
+To make sure my end users ca use my website wit efficiency, I will plan out user flows from the beginning, and receive feedback on them from my end user. I will also test the system often, making sure the end user can navigate to the important parts wit ease. 
 
 
-## NAME OF UX PRINCIPLE 3
+## Consistent and Clear 
 
-Replace this text with a clear explanation of what the principle means.
+Considering this can mean ensuring pages are laid out with consistency. 
 
 ### Relevance to the System
 
-Replace this text with an explanation of why the principle is relevant to this particular project.
-
+Keeping my pages consistent in their similarity can lead to the user knowing how to navigate the system quicker. 
 ### Impact / Considerations
 
-Replace this text with an explanation of what you will need to consider moving forward and how the project will be impacted by this principle.
+To insure I create a clear system, I plan to talk with my end user, and show them some design layouts that I can then take feedback on and improve. This was, the end users will be the ones deciding the clearest and most concise layout. 
+
 
