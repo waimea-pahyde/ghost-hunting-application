@@ -1,0 +1,23 @@
+{#=====================================================
+  Home page
+=====================================================#}
+
+{% extends 'pages/_base.jinja' %}
+
+
+{% block content %}
+
+    <form method="post" action="/login">
+            <label>
+      Username
+      <input type="text" name="username" required>
+      </label>
+            <label>
+      password
+      <input type="password" name="password" required>
+      </label>
+      <button >Submit</button>
+    </form>
+
+{% endblock %}
+

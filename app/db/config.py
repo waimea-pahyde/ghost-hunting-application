@@ -15,31 +15,98 @@
 #     SEED_DATA = "INSERT INTO name (...)" or None
 #----------------------------------------------------------------------------
 
-class NoteTable:
+class userTable:
 
-    NAME = "note"
+    NAME = "user"
 
     SCHEMA = """
-        CREATE TABLE note (
+        CREATE TABLE user (
             id      INTEGER PRIMARY KEY AUTOINCREMENT,
-            title   TEXT NOT NULL,
-            body    TEXT,
-            pinned  INTEGER DEFAULT 0,
+            forename        TEXT NOT NULL,
+            surname     TEXT NOT NULL,
+            username        TEXT NOT NULL, 
+            reportedHunts   INT,
+            bio    TEXT,
+            passwordHash         TEXT NOT NULL,
+            ghostHunter             BOOLEAN, 
             created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """
 
     SEED_DATA = """
-        INSERT INTO note (title, pinned, body)
+        INSERT INTO user (forename, surname, username, reportedHunts, bio, passwordHash, ghostHunter)
         VALUES
-            ("Welcome!",      1, "This is a demo application using Flask, Jinja and SQLite."),
-            ("Shopping List", 0, "Milk\nBread\nEggs\nCheese"),
-            ("Meeting Notes", 0, "Discussed project timeline.\n\nAction items:\n- Review design\n- Update docs"),
-            ("Recipe: Pasta", 0, "Ingredients:\n- 500g pasta\n- Tomato sauce\n- Garlic\n\nCook pasta, add sauce, enjoy!"),
-            ("Important!",    1, "Remember to backup your database regularly.")
+            ("Sharon", "Paratrack", "sharontracksghosts", 4, "Hey! I'm Sharon Paratrack. A fun fact about me: I can smell ghosts!", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252", false),
+            ("Hugh", "Findghost", "hughfindsghosts", 2, "Hey! I'm Hugh Findghost. A fun fact about me: I know the best ghost locations!", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252", false),
+            ("Ryan", " Banishspirit", "ryanbanishesspirits", 0, "I'm not entirely sure what I'm doing here but I keep finding ghosts in new world.", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252", false),
+            ("John", "Ghosthunter", "JohnGhosthunter", 1, "Hey! I'm John Ghostunter. After my creepy uncles disapearence, I've been fascinated in hunting ghosts.", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252", false)
+            
     """
 
-# Add more table classes here...
+
+
+class messagesTable:
+
+    NAME = "message"
+
+    SCHEMA = """
+        CREATE TABLE message (
+            id      INTEGER PRIMARY KEY AUTOINCREMENT,
+            sender     INTEGER NOT NULL REFERENCES user(id),
+            body     TEXT NOT NULL,
+            sent TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """
+
+    SEED_DATA = """
+        INSERT INTO message (sender, body)
+        VALUES
+           (2, "Where's the milk?"),
+           (1, "For the last time this isn't a New World, it's just an abandoned building"),
+           (1, "But I met someones nice uncle :(" )
+    """
+
+class reportedHuntTable:
+
+    NAME = "reportedHunt"
+
+    SCHEMA = """
+        CREATE TABLE reportedHunt (
+            id      INTEGER PRIMARY KEY AUTOINCREMENT,
+            reportedBy    ID REFERENCES user(id) ,
+            details             TEXT NOT NULL,  
+            dateReported TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            location TEXT NOT NULL, 
+            dateOfHunt TEXT
+        )
+    """
+
+    SEED_DATA = """
+        INSERT INTO reportedHunt (reportedBy, details, location, dateOfHunt)
+        VALUES
+            (3, "I was sleeping, and then I saw my uncle, Dan Ghosthunter, standing in my window. My house is on the 2nd Floor, surrounded by trees, so it had to be a ghost 👻. Then, the next day, they found my dear Uncle Dan dead from head trauma after a significant fall outside my house. The ghost teleported him as punishment. And to think, he just got out of jail for stalking too. Poor Dan. He didn't deserve this.", "10 Ridgeview Court", "4/11/26")
+        
+    """
+
+class participantTable:
+
+    NAME = "participant"
+
+    SCHEMA = """
+        CREATE TABLE participant (
+           ghostHunterID        INTEGER NOT NULL REFERENCES user(id),
+            huntID      INTEGER NOT NULL REFERENCES reportedHunt(id)
+        )
+    """
+
+    SEED_DATA = """
+        INSERT INTO participant (ghostHunterID, huntID)
+        VALUES
+            (0,0),
+            (1,0),
+            (2,0),
+            (3,0)
+    """
 
 
 
@@ -59,7 +126,10 @@ class NoteTable:
 #----------------------------------------------------------------------------
 
 TABLES = [
-    NoteTable,
+    userTable,
+    participantTable,
+    messagesTable,
+    reportedHuntTable
     # Add more tables here...
 ]
 

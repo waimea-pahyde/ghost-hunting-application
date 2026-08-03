@@ -1,0 +1,26 @@
+{#=====================================================
+  Home page
+=====================================================#}
+
+{% extends 'pages/_base.jinja' %}
+
+{# TODO make name anon. #}
+{% block content %}
+
+    <form method="post" action="/sendReport">
+            <label>
+            {# TODO turn co-ords into map.  #}
+      ghost Co-ords
+      <input type="text" name="location" required>
+      </label>
+      <label>
+      description of events
+      <input type="text" name="description" required>
+      </label>
+
+      
+      <button >Submit</button>
+    </form>
+
+{% endblock %}
+

@@ -1,0 +1,39 @@
+{#=====================================================
+  Home page
+=====================================================#}
+
+{% extends 'pages/_base.jinja' %}
+
+
+{% block content %}
+
+    <form method="post" action="/signup">
+
+    <label>
+      First name
+      <input type="text" name="forename" required>
+      </label>
+
+      <label>
+      last name
+      <input type="text" name="surname" required>
+      </label>
+            
+      <label>
+      Username
+      <input type="text" name="username" required>
+      </label>
+            
+      <label>
+      password
+      <input type="password" name="password" required>
+      </label>
+      <label>
+      I am ghost hunter:
+      <input type="checkbox" name="ghostHunter" required value="1">
+      </label>
+      <button >Submit</button>
+    </form>
+
+{% endblock %}
+
