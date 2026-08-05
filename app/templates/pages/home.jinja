@@ -9,6 +9,24 @@
 
     <a href="/login_page">Login to the website!</a>
     <a href="/signup_page">Signup to the website</a>
+    <a href="/report_ghost">Report a ghost sihting!</a>
+
+    {%for hunt in hunts %}
+    <br>
+   <a href="/view_hunt/{{hunt.id}}">{{hunt.location}}</a>
+   
+  
+    <p>Reported by: </p>
+   
+   {% if hunt.reportedBy == none %} 
+      <p>Anonomous</p>
+    {%else%}
+      {{ hunt.username}}
+    {%endif%}
+    {%endfor%}
+    
+   
+
 
 {% endblock %}
 

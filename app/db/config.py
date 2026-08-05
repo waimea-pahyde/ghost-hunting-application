@@ -25,7 +25,7 @@ class userTable:
             forename        TEXT NOT NULL,
             surname     TEXT NOT NULL,
             username        TEXT NOT NULL, 
-            reportedHunts   INT,
+            reportedHunts   INT DEFAULT 0,
             bio    TEXT,
             passwordHash         TEXT NOT NULL,
             ghostHunter             BOOLEAN, 
@@ -72,20 +72,22 @@ class reportedHuntTable:
 
     SCHEMA = """
         CREATE TABLE reportedHunt (
-            id      INTEGER PRIMARY KEY AUTOINCREMENT,
+            id      INTEGER PRIMARY KEY AUTOINCREMENT ,
             reportedBy    ID REFERENCES user(id) ,
             details             TEXT NOT NULL,  
-            dateReported TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            location TEXT NOT NULL, 
-            dateOfHunt TEXT
+            dateReported TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            location TEXT NOT NULL
         )
     """
+    # Reported by
+    # string
 
     SEED_DATA = """
-        INSERT INTO reportedHunt (reportedBy, details, location, dateOfHunt)
+        INSERT INTO reportedHunt (reportedBy, details, location)
         VALUES
-            (3, "I was sleeping, and then I saw my uncle, Dan Ghosthunter, standing in my window. My house is on the 2nd Floor, surrounded by trees, so it had to be a ghost 👻. Then, the next day, they found my dear Uncle Dan dead from head trauma after a significant fall outside my house. The ghost teleported him as punishment. And to think, he just got out of jail for stalking too. Poor Dan. He didn't deserve this.", "10 Ridgeview Court", "4/11/26")
-        
+            (3, "I was sleeping, and then I saw my uncle, Dan Ghosthunter, standing in my window. My house is on the 2nd Floor, surrounded by trees, so it had to be a ghost 👻. Then, the next day, they found my dear Uncle Dan dead from head trauma after a significant fall outside my house. The ghost teleported him as punishment. And to think, he just got out of jail for stalking too. Poor Dan. He didn't deserve this.", "10 Ridgeview Court"),
+            (1, "TEST DATA PLEASE IGNORE", "test")
+
     """
 
 class participantTable:

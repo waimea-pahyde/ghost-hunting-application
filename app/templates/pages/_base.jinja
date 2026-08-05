@@ -29,11 +29,15 @@
             Notes Demo
         </a>
 
-        <nav>
-            <a href="/">All Notes</a>
-            <a href="/">Link</a>
-            <a href="/">Link</a>
-        </nav>
+{% if session.logged_in %}
+    <a href="/logout">Logout</a>
+    <a href="/messages">Messages</a>
+
+
+{% else %}
+    <a href="/login_page">Login</a>
+    <a href="/user/new">Sign-Up</a>
+{% endif %}   
     </header>
 
     {# Show flash messages from any previous events #}

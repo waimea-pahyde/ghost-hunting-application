@@ -15,6 +15,33 @@ from app.helpers import *
 # Create the app
 app = Flask(__name__)
 
+# TODO
+#  - signup for hunts
+#  INdividual hunt page
+
+
+# - see hunt ui
+# - send hunt feedback 
+# - fuck thats a databsase thing isn't it
+#  - fit database
+#  - stop at nice park benches to delay arrival at bridges to cross
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #===================================👻========================
 # App Routes Handlers
@@ -44,7 +71,16 @@ app = Flask(__name__)
 
 @app.get("/")
 def show_home():
-    return render_template("pages/home.jinja")
+
+    with connect_db() as db:
+            sql = """
+            SELECT * FROM reportedHunt
+
+            """
+
+                    # LEFT JOIN user ON reportedHunt.reportedBy = user.id
+            hunts = db.execute(sql).fetchall()
+    return render_template("pages/home.jinja", hunts=hunts)
 
 @app.get("/login_page")
 def show_login():
@@ -127,21 +163,57 @@ def report_ghost():
     return render_template("pages/reportForm.jinja")
 
 
+
+
+
+@app.get("/view_hunt/<int:id>")
+def view_hunt(id):
+    with connect_db() as db:
+        sql = """
+            SELECT * FROM reportedHunt WHERE id=?
+        """
+        params = (id)
+        hunt = db.execute(sql, params).fetchall()
+    return render_template("pages/hunt.jinja", hunt=hunt)
+
+
+
+
+
+
+# SEnd report
+# If the user is not logged in, set name as null
+# If the user is logged in, set the person who reported it's hunt to their ID
+
+# not cry  I know exactly what i'm doing look at me go. 
+
 @app.post("/sendReport")
 def add_hunt():
     location  = request.form.get('location',  '').strip()
     description = request.form.get('description', '').strip()
-
-    with connect_db() as db:
-        sql = """
+    if 'id' in session:
+        
+        with connect_db() as db:
+            sql = """
             INSERT INTO reportedHunt ()
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (?,?, ?)
         """
-        params = (forename, surname, username, pass_hash, ghostHunter)
+        params = (session["id"], location, description)
         db.execute(sql, params)
+    
+    else:
+        with connect_db() as db:
+            
+            sql = """
+            INSERT INTO reportedHunt (location, details)
+            VALUES (?,?)
+            """
+            params = (location, description)
+            db.execute(sql, params)
 
-        flash("Account created. Please login", "success")
-        return redirect("/login_page")
+
+    flash("report sent!", "success")
+    return redirect("/")
 
 
 
