@@ -1,15 +1,36 @@
-{#=====================================================
-  Home page
-=====================================================#}
+{# hunt page #}
 
 {% extends 'pages/_base.jinja' %}
 
 
 {% block content %}
 
-<p>{{ hunt.location}}
-{{hunt.description}}    </p>
+
+    <h1>Hunt at {{hunt.location}}</h1>
+    <h2>Hunt information:</h2>
+    <p>{{hunt.details}} </p>
+    
+    <p>Reported by: </p>
    
+   {% if hunt.reportedBy == none %} 
+      <p>Anonomous</p>
+    {%else%}
+      {{ hunt.username}}
+    {%endif%}
+    <br>
+    <p>Hunt reported on: {{ hunt.dateReported }}     </p>
+   
+   
+    {% if session.logged_in %}
+     <form method="post" action="/join_hunt/{{hunt.id}}">
+    <button>Join Hunt</button>
+     </form>
+     {% else%}
+     <p>Please log in to participate in the hunt! </p>
+     {% endif%}
+
+
+
 
 
 {% endblock %}

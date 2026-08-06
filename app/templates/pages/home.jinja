@@ -14,15 +14,12 @@
     {%for hunt in hunts %}
     <br>
    <a href="/view_hunt/{{hunt.id}}">{{hunt.location}}</a>
-   
-  
-    <p>Reported by: </p>
-   
-   {% if hunt.reportedBy == none %} 
-      <p>Anonomous</p>
-    {%else%}
-      {{ hunt.username}}
-    {%endif%}
+    {%endfor%}
+
+
+  {%for hunt in myHunts %}
+    <br>
+   <a href="/view_hunt/{{hunt.id}}">{{hunt.location}}</a>
     {%endfor%}
     
    

@@ -77,10 +77,22 @@ def show_home():
             SELECT * FROM reportedHunt
 
             """
-
-                    # LEFT JOIN user ON reportedHunt.reportedBy = user.id
+              # LEFT JOIN user ON reportedHunt.reportedBy = user.id
             hunts = db.execute(sql).fetchall()
-    return render_template("pages/home.jinja", hunts=hunts)
+
+
+            if (session["logged_in"]): 
+
+                sql = """
+                SELECT * FROM participant WHERE ghostHunterID = ? """
+                params = [session["user"]["id"]]
+                
+                myHunts = db.execute(sql, params)
+                return render_template("pages/home.jinja", hunts=hunts, myHunts=myHunts)
+
+            else:
+                return render_template("pages/home.jinja", hunts=hunts)
+
 
 @app.get("/login_page")
 def show_login():
@@ -162,6 +174,30 @@ def add_user():
 def report_ghost():
     return render_template("pages/reportForm.jinja")
 
+# joining hunt 
+
+@app.post("/join_hunt/<int:id>")
+@login_required
+def join_hunt(id):
+    
+    # Add the hunt id to the participants table
+    # get the session ID nd add that to the participants table
+    # when reading off, get all entries from the participants table where hunt id matches hunt id
+    # profile, get all hunts match that
+    # bingo :thumbs_up: 
+    
+    with connect_db() as db:
+        sql = """
+            INSERT INTO participants (huntID, ghostHunterID )
+            VALUES (?, ?)
+        """
+        params = (id, session["id"])
+        db.execute(sql, params)
+
+        flash("You have signed up for this hunt.")
+        return redirect("/")
+
+
 
 
 
@@ -172,8 +208,8 @@ def view_hunt(id):
         sql = """
             SELECT * FROM reportedHunt WHERE id=?
         """
-        params = (id)
-        hunt = db.execute(sql, params).fetchall()
+        params = [id]
+        hunt = db.execute(sql, params).fetchone()
     return render_template("pages/hunt.jinja", hunt=hunt)
 
 
