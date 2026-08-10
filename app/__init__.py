@@ -80,18 +80,20 @@ def show_home():
               # LEFT JOIN user ON reportedHunt.reportedBy = user.id
             hunts = db.execute(sql).fetchall()
 
-
-            if (session["logged_in"]): 
-
+            myHunts = None
+            
+            if session.get("user") and session.get("logged_in"):
                 sql = """
-                SELECT * FROM participant WHERE ghostHunterID = ? """
+            SELECT * FROM participant 
+            JOIN reportedHunt ON participant.huntID = reportedHunt.id
+            WHERE participant.ghostHunterID = ? 
+                """
                 params = [session["user"]["id"]]
                 
-                myHunts = db.execute(sql, params)
-                return render_template("pages/home.jinja", hunts=hunts, myHunts=myHunts)
 
-            else:
-                return render_template("pages/home.jinja", hunts=hunts)
+                myHunts = db.execute(sql, params).fetchall()
+
+            return render_template("pages/home.jinja", hunts=hunts, myHunts=myHunts)
 
 
 @app.get("/login_page")
@@ -187,11 +189,14 @@ def join_hunt(id):
     # bingo :thumbs_up: 
     
     with connect_db() as db:
+        
+        
+        
         sql = """
-            INSERT INTO participants (huntID, ghostHunterID )
+            INSERT INTO participant (huntID, ghostHunterID )
             VALUES (?, ?)
         """
-        params = (id, session["id"])
+        params = (id, session["user"]["id"])
         db.execute(sql, params)
 
         flash("You have signed up for this hunt.")

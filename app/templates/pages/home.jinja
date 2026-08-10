@@ -11,16 +11,22 @@
     <a href="/signup_page">Signup to the website</a>
     <a href="/report_ghost">Report a ghost sihting!</a>
 
+    <h2>All hunts available: </h2>
     {%for hunt in hunts %}
     <br>
    <a href="/view_hunt/{{hunt.id}}">{{hunt.location}}</a>
     {%endfor%}
 
+  
+  {% if myHunts  %}
+  <h2>My hunts:</h2>
+    {%for hunt in myHunts %}
+      <br>
+      {{hunt.location}}
 
-  {%for hunt in myHunts %}
-    <br>
-   <a href="/view_hunt/{{hunt.id}}">{{hunt.location}}</a>
-    {%endfor%}
+
+      {%endfor%}
+    {%endif%}
     
    
 
