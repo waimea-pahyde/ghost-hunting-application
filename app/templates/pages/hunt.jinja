@@ -29,9 +29,19 @@
      <p>Please log in to participate in the hunt! </p>
      {% endif%}
 
-
+      <p>Hunt beginning on {{hunt.huntDate }}</p>
+      <p>today is {{hunt.today}} and the hunt is set for {{hunt.huntDate}}</p>
+     
+     {# TODO Add a third and in here which doesn't let you go unless you have signed up for the hunt. #}
+      
+      
+      {# {% if hunt.huntDate == hunt.today and session.logged_in%}  add back when I'm done. #}
+      {% if session.logged_in %}
+      <a href="/hunting/{{hunt.id}}">Hunt has started! Go to hunt page.</a>
+      {%endif%}
 
 
 
 {% endblock %}
-
+ 
+  

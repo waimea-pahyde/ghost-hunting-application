@@ -1,0 +1,46 @@
+{# hunt page #}
+
+{% extends 'pages/_base.jinja' %}
+
+
+{% block content %}
+
+
+{# # Hunt page. Go to see hunt. 
+# Before the hunt starts:
+# See location, the fellow people who are also hunting with me, when it starts, and an option to see the initial report. +Option to proceed into the hunt screen early. 
+# If time: a way back to that screen while the hunt hasn't started. 
+
+# During the hunt:
+# See list of who's participating, messages, initial ghost report, end hunt button. 
+# If time: current location of alll the hunters. 
+
+#After hunt: 
+# A place to summarise the hunt outcomes, a place for recdcomended next steps, a place to get photos, option to return without report. 
+# Figure out how to make this work. Ideas: Allocate one member to create the hunt. Other people send photos to them, they wreite report. Hunt leader situation could be helpful
+#for other things I can't remember. First in is hunt leader? Or, reports get tacked on one after another.  #}
+
+
+
+
+{# while its before the time the leader decided. #}
+    <h1>Hunt at {{hunt.location}}</h1>
+    <p>Hunt starts in: if your seeing this I haven't implemented the leader system and I still need to do that.  </p>
+
+    {% for participant in participants%}
+    {{ participant.forename }}
+    {{participant.surname}}
+    <br>
+  {%endfor%}
+
+    <h2>There's gonna be a map here eventually. Unfortunately, that's gonna take a lot of <strike>tears</strike> javascript libraries, so it's not here yet.</h2>
+
+    {# Once this is all in one, chuck a 'hey its this time change the status :)' #}
+
+    <a href="/hunting_inhunt/{{hunt.id}}" class="button-link">Go to in progress hunt</a>
+
+
+
+{% endblock %}
+ 
+  

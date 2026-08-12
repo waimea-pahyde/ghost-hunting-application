@@ -1,0 +1,37 @@
+{# hunt page #}
+
+{% extends 'pages/_base.jinja' %}
+
+
+{% block content %}
+
+
+
+
+{# During the hunt:
+# See list of who's participating, messages, initial ghost report, end hunt button. 
+# If time: current location of alll the hunters. 
+
+#After hunt: 
+# A place to summarise the hunt outcomes, a place for recdcomended next steps, a place to get photos, option to return without report. 
+# Figure out how to make this work. Ideas: Allocate one member to create the hunt. Other people send photos to them, they wreite report. Hunt leader situation could be helpful
+#for other things I can't remember. First in is hunt leader? Or, reports get tacked on one after another.  #}
+
+
+
+    <h1>Hunt at as it turns out I was pulling something from reporteds hunts and it was this. Fix this. </h1>
+    <p>Participants in this hunt:</p>
+    {% for participant in participants%}
+    {{ participant.forename }}
+    {{participant.surname}}
+    <br>
+  {%endfor%}
+
+  
+    <a href="/hunting_inhunt/{{hunt.id}}" class="button-link">Go to in progress hunt</a>
+
+
+
+{% endblock %}
+ 
+  

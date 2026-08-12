@@ -53,17 +53,18 @@ class messagesTable:
         CREATE TABLE message (
             id      INTEGER PRIMARY KEY AUTOINCREMENT,
             sender     INTEGER NOT NULL REFERENCES user(id),
+            hunt        INTEGER NOT NULL REFERENCES reportedHunt(id),
             body     TEXT NOT NULL,
             sent TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """
 
     SEED_DATA = """
-        INSERT INTO message (sender, body)
+        INSERT INTO message (sender, hunt, body)
         VALUES
-           (2, "Where's the milk?"),
-           (1, "For the last time this isn't a New World, it's just an abandoned building"),
-           (1, "But I met someones nice uncle :(" )
+           (2, 0, "Where's the milk?"),
+           (1, 0, "For the last time this isn't a New World, it's just an abandoned building"),
+           (1, 0, "But I met someones nice uncle :(" )
     """
 
 class reportedHuntTable:
@@ -77,8 +78,11 @@ class reportedHuntTable:
             details             TEXT NOT NULL,  
             dateReported TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
             location TEXT NOT NULL
+
         )
     """
+
+    #             status    TEXT DEFAULT 'reported'
     # Reported by
     # string
 

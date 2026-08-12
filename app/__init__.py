@@ -10,6 +10,7 @@ from os import getenv
 from io import BytesIO
 import html
 from app.helpers import *
+import datetime
 
 
 # Create the app
@@ -84,15 +85,18 @@ def show_home():
             
             if session.get("user") and session.get("logged_in"):
                 sql = """
-            SELECT * FROM participant 
-            JOIN reportedHunt ON participant.huntID = reportedHunt.id
-            WHERE participant.ghostHunterID = ? 
+                SELECT *
+                FROM participant 
+                JOIN reportedHunt ON participant.huntID = reportedHunt.id
+                WHERE participant.ghostHunterID = ? 
                 """
                 params = [session["user"]["id"]]
                 
 
                 myHunts = db.execute(sql, params).fetchall()
 
+            
+            
             return render_template("pages/home.jinja", hunts=hunts, myHunts=myHunts)
 
 
@@ -181,15 +185,16 @@ def report_ghost():
 @app.post("/join_hunt/<int:id>")
 @login_required
 def join_hunt(id):
-    
-    # Add the hunt id to the participants table
-    # get the session ID nd add that to the participants table
-    # when reading off, get all entries from the participants table where hunt id matches hunt id
-    # profile, get all hunts match that
-    # bingo :thumbs_up: 
-    
+
+# rip out the check if user exists from the signup table and put it here. 
     with connect_db() as db:
-        
+        sql = "SELECT huntID FROM participant WHERE ghostHunterID=?"
+        params = [session["user"]["id"]]
+        signedUp = db.execute(sql, params).fetchone()
+
+        if  signedUp:
+            flash("You have already signed up for this hunt!", "error")
+            return redirect("/")
         
         
         sql = """
@@ -202,20 +207,90 @@ def join_hunt(id):
         flash("You have signed up for this hunt.")
         return redirect("/")
 
-
-
-
-
-
 @app.get("/view_hunt/<int:id>")
 def view_hunt(id):
     with connect_db() as db:
         sql = """
-            SELECT * FROM reportedHunt WHERE id=?
+            SELECT  
+                reportedHunt.id,
+                reportedHunt.reportedBy,
+                reportedHunt.details,
+                reportedHunt.dateReported,
+                DATE(reportedHunt.dateReported, '+7 days', 'localtime') AS huntDate,
+                reportedHunt.location,
+                DATE('now', 'localtime') AS today
+                
+            FROM reportedHunt WHERE id=?
+        """
+        # see if there's a better way to do the date now once it works. 
+        params = [id]
+        hunt = db.execute(sql, params).fetchone()
+
+    return render_template("pages/hunt.jinja", hunt=hunt)
+
+
+# Hunt page. Go to see hunt. 
+# Before the hunt starts:
+# See location, the fellow people who are also hunting with me, when it starts, and an option to see the initial report. +Option to proceed into the hunt screen early. 
+# If time: a way back to that screen while the hunt hasn't started. 
+
+# During the hunt:
+# See list of who's participating, messages, initial ghost report, end hunt button. 
+# If time: current location of alll the hunters. 
+
+#After hunt: 
+# A place to summarise the hunt outcomes, a place for recdcomended next steps, a place to get photos, option to return without report. 
+# Figure out how to make this work. Ideas: Allocate one member to create the hunt. Other people send photos to them, they wreite report. Hunt leader situation could be helpful
+#for other things I can't remember. First in is hunt leader? Or, reports get tacked on one after another. 
+
+
+# Do time stamps. Make it actually tick down. 
+# Potentially go with leader scenario. Leader picks date and time. Implement leader thing later. 
+
+@app.get("/hunting/<int:id>")
+def hunt(id):
+    with connect_db() as db:
+        sql = """
+            SELECT  * FROM reportedHunt WHERE id=?
         """
         params = [id]
         hunt = db.execute(sql, params).fetchone()
-    return render_template("pages/hunt.jinja", hunt=hunt)
+
+        sql = """
+            SELECT  * FROM participant
+            JOIN user AS hunters ON participant.ghostHunterID = hunters.id 
+            WHERE participant.huntID=?
+        """
+        params = [id]
+        participants = db.execute(sql, params).fetchall()
+
+    return render_template("pages/hunting.jinja", hunt=hunt, participants=participants)
+
+
+# in progress hunt. Merge w top once all in one
+
+@app.get("/hunting_inhunt/<int:id>")
+def in_hunt(id):
+        with connect_db() as db:
+            sql = """
+                SELECT  * FROM participant
+                JOIN user AS hunters ON participant.ghostHunterID = hunters.id 
+                WHERE participant.huntID=?
+            """
+            params = [id]
+            participant = db.execute(sql, params).fetchall()
+
+            sql = """
+                SELECT  * FROM message
+                JOIN user AS hunters ON message.sender = hunters.id 
+                WHERE message.hunt=?
+            """
+            params = [id]
+            message = db.execute(sql, params).fetchall()
+
+
+
+        return render_template("pages/huntinginhunt.jinja", message=message, participant=participant)
 
 
 
