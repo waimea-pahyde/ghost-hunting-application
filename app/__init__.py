@@ -290,7 +290,7 @@ def in_hunt(id):
 
 
 
-        return render_template("pages/huntinginhunt.jinja", message=message, participant=participant)
+        return render_template("pages/huntinginhunt.jinja", message=message, participant=participant, id=id)
 
 
 
@@ -333,8 +333,43 @@ def add_hunt():
 
 
 
+@app.post("/message/<int:id>/")
+def add_message(id):
+    user = session["user"]
+    user_id = user["id"]
+    body = request.form.get('body', '').strip()
+
+    with connect_db() as db:
+        sql = """
+            INSERT INTO message (sender, hunt, body)
+            VALUES (?, ?, ?)
+        """
+        params = (user_id, id, body)
+        db.execute(sql, params)
+    
+        
+
+        flash("message posted!!", "success")
+        with connect_db() as db:
+            sql = """
+                SELECT  * FROM participant
+                JOIN user AS hunters ON participant.ghostHunterID = hunters.id 
+                WHERE participant.huntID=?
+            """
+            params = [id]
+            participant = db.execute(sql, params).fetchall()
+
+            sql = """
+                SELECT  * FROM message
+                JOIN user AS hunters ON message.sender = hunters.id 
+                WHERE message.hunt=?
+            """
+            params = [id]
+            message = db. execute(sql, params).fetchall()
 
 
+
+        return render_template("pages/huntinginhunt.jinja", message=message, participant=participant, id=id)
 
 
 

@@ -19,16 +19,38 @@
 
 
 
-    <h1>Hunt at as it turns out I was pulling something from reporteds hunts and it was this. Fix this. </h1>
+    <h1>make this say where the hunt is eventually.  </h1>
+    
     <p>Participants in this hunt:</p>
     {% for participant in participants%}
     {{ participant.forename }}
     {{participant.surname}}
+
     <br>
   {%endfor%}
 
+    <p>Messages:</p>
+    {% for messag in message%}
+    <p>{{ messag.forename }}
+    {{ messag.surname}}:
+    {{messag.body}}</p>
+
+    <br>
+  {%endfor%}
   
-    <a href="/hunting_inhunt/{{hunt.id}}" class="button-link">Go to in progress hunt</a>
+  <section>
+    <h2>Send Message</h2>
+
+    <form method="post" action="/message/{{id}}/">
+    <label>
+      <input type="text
+      " name="body" required>
+      </label>
+      <button >Send</button>
+    </form>
+    </section>
+  
+    <a href="/hunting_inhunt/{{participant.huntID}}" class="button-link">Go to in progress hunt</a>
 
 
 
