@@ -347,29 +347,7 @@ def add_message(id):
         params = (user_id, id, body)
         db.execute(sql, params)
     
-        
-
-        flash("message posted!!", "success")
-        with connect_db() as db:
-            sql = """
-                SELECT  * FROM participant
-                JOIN user AS hunters ON participant.ghostHunterID = hunters.id 
-                WHERE participant.huntID=?
-            """
-            params = [id]
-            participant = db.execute(sql, params).fetchall()
-
-            sql = """
-                SELECT  * FROM message
-                JOIN user AS hunters ON message.sender = hunters.id 
-                WHERE message.hunt=?
-            """
-            params = [id]
-            message = db. execute(sql, params).fetchall()
-
-
-
-        return render_template("pages/huntinginhunt.jinja", message=message, participant=participant, id=id)
+    return redirect(f"/hunting_inhunt/{id}")
 
 
 
