@@ -2,7 +2,7 @@ services:
   web:
     build: .
     ports:
-      - "5000:5000"
+      - "4999:4999"
     volumes:
       - .:/app        # live-reloads code changes without rebuilding
     env_file:

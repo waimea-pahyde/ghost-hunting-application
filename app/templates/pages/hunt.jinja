@@ -15,11 +15,11 @@
    {% if hunt.reportedBy == none %} 
       <p>Anonomous</p>
     {%else%}
-      {{ hunt.username}}
+      {{ hunt.reporterUsername }}
     {%endif%}
     <br>
     <p>Hunt reported on: {{ hunt.dateReported }}     </p>
-   
+    <p>Hunt leader is {{ hunt.leaderUsername}}</p>
    
     {% if session.logged_in %}
      <form method="post" action="/join_hunt/{{hunt.id}}">

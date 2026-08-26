@@ -180,7 +180,7 @@ def add_user():
 def report_ghost():
     return render_template("pages/reportForm.jinja")
 
-# joining hunt 
+# joining hunt - id given being the hunt id
 
 @app.post("/join_hunt/<int:id>")
 @login_required
@@ -188,14 +188,28 @@ def join_hunt(id):
 
 # rip out the check if user exists from the signup table and put it here. 
     with connect_db() as db:
-        sql = "SELECT huntID FROM participant WHERE ghostHunterID=?"
-        params = [session["user"]["id"]]
+        # Show if there's a row where the hunt id = the id given AND ghost hunter id = the id
+        sql = "SELECT * FROM participant WHERE ghostHunterID=? AND huntID=?"
+        params = [session["user"]["id"],id]
         signedUp = db.execute(sql, params).fetchone()
 
         if  signedUp:
             flash("You have already signed up for this hunt!", "error")
             return redirect("/")
         
+        sql = "SELECT ghostHunterID  FROM participant WHERE huntID=?"
+        params = [id]
+        leader = db.execute(sql, params).fetchall()
+        
+        if not leader:
+            sql = """
+            UPDATE reportedHunt 
+            SET (huntLeader)=?
+            WHERE id=?
+            """
+            params = (session["user"]["id"], id)
+            db.execute(sql, params)
+
         
         sql = """
             INSERT INTO participant (huntID, ghostHunterID )
@@ -207,22 +221,29 @@ def join_hunt(id):
         flash("You have signed up for this hunt.")
         return redirect("/")
 
+
+
+
 @app.get("/view_hunt/<int:id>")
 def view_hunt(id):
     with connect_db() as db:
         sql = """
             SELECT  
                 reportedHunt.id,
+                reportedHunt.huntLeader,
                 reportedHunt.reportedBy,
                 reportedHunt.details,
                 reportedHunt.dateReported,
                 DATE(reportedHunt.dateReported, '+7 days', 'localtime') AS huntDate,
                 reportedHunt.location,
-                DATE('now', 'localtime') AS today
-                
-            FROM reportedHunt WHERE id=?
+                DATE('now', 'localtime') AS today,
+                reporter.username AS reporterUsername,
+                leader.username AS leaderUsername
+            FROM reportedHunt
+            INNER JOIN user AS reporter ON reportedHunt.reportedBy = reporter.id
+            INNER JOIN user AS leader ON reportedHunt.huntLeader = leader.id 
+            WHERE reportedHunt.id=?
         """
-        # see if there's a better way to do the date now once it works. 
         params = [id]
         hunt = db.execute(sql, params).fetchone()
 
@@ -292,7 +313,10 @@ def in_hunt(id):
 
         return render_template("pages/huntinginhunt.jinja", message=message, participant=participant, id=id)
 
-
+# Leader system. 
+# Each hunt has a 'leader'
+# If 'people in hunt' = 0 then you're the leader
+# yay
 
 
 

@@ -62,9 +62,9 @@ class messagesTable:
     SEED_DATA = """
         INSERT INTO message (sender, hunt, body)
         VALUES
-           (2, 0, "Where's the milk?"),
-           (1, 0, "For the last time this isn't a New World, it's just an abandoned building"),
-           (1, 0, "But I met someones nice uncle :(" )
+           (3, 1, "Where's the milk?"),
+           (2, 1, "For the last time this isn't a New World, it's just an abandoned building"),
+           (3, 1, "But I met someones nice uncle :(" )
     """
 
 class reportedHuntTable:
@@ -74,23 +74,22 @@ class reportedHuntTable:
     SCHEMA = """
         CREATE TABLE reportedHunt (
             id      INTEGER PRIMARY KEY AUTOINCREMENT ,
+            huntLeader      ID REFERENCES user(id),
             reportedBy    ID REFERENCES user(id) ,
             details             TEXT NOT NULL,  
             dateReported TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            
             location TEXT NOT NULL
 
         )
     """
 
-    #             status    TEXT DEFAULT 'reported'
-    # Reported by
-    # string
 
     SEED_DATA = """
         INSERT INTO reportedHunt (reportedBy, details, location)
         VALUES
-            (3, "I was sleeping, and then I saw my uncle, Dan Ghosthunter, standing in my window. My house is on the 2nd Floor, surrounded by trees, so it had to be a ghost 👻. Then, the next day, they found my dear Uncle Dan dead from head trauma after a significant fall outside my house. The ghost teleported him as punishment. And to think, he just got out of jail for stalking too. Poor Dan. He didn't deserve this.", "10 Ridgeview Court"),
-            (1, "TEST DATA PLEASE IGNORE", "test")
+            (4, "I was sleeping, and then I saw my uncle, Dan Ghosthunter, standing in my window. My house is on the 2nd Floor, surrounded by trees, so it had to be a ghost 👻. Then, the next day, they found my dear Uncle Dan dead from head trauma after a significant fall outside my house. The ghost teleported him as punishment. And to think, he just got out of jail for stalking too. Poor Dan. He didn't deserve this.", "10 Ridgeview Court"),
+            (2, "TEST DATA PLEASE IGNORE", "test")
 
     """
 
@@ -108,10 +107,10 @@ class participantTable:
     SEED_DATA = """
         INSERT INTO participant (ghostHunterID, huntID)
         VALUES
-            (0,0),
-            (1,0),
-            (2,0),
-            (3,0)
+            (1,1),
+            (2,1),
+            (3,1),
+            (4,1)
     """
 
 
