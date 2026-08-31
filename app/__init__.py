@@ -318,6 +318,28 @@ def in_hunt(id):
 # If 'people in hunt' = 0 then you're the leader
 # yay
 
+@app.get("/hunting_afterhunt/<int:id>")
+def after_hunt(id):
+        with connect_db() as db:
+            sql = """
+                SELECT  * FROM participant
+                JOIN user AS hunters ON participant.ghostHunterID = hunters.id 
+                WHERE participant.huntID=?
+            """
+            params = [id]
+            participant = db.execute(sql, params).fetchall()
+
+            sql = """
+                SELECT  * FROM reportedHunt
+                WHERE reportedHunt.id=?
+            """
+            params = [id]
+            hunt = db.execute(sql, params).fetchall()
+
+            current_user = session["user"]["id"]
+
+
+        return render_template("pages/huntingafterhunt.jinja", hunt=hunt, participant=participant, id=id, current_user = current_user)
 
 
 

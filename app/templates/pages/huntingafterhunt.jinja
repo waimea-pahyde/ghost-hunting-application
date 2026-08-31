@@ -21,37 +21,23 @@
 
     <h1>make this say where the hunt is eventually.  </h1>
     
-    <p>Participants in this hunt:</p>
-    {% for participant in participants%}
-    {{ participant.forename }}
-    {{participant.surname}}
-
-    <br>
-  {%endfor%}
-
-    <p>Messages:</p>
-    {% for messag in message%}
-    <p>{{ messag.forename }}
-    {{ messag.surname}}:
-    {{messag.body}}</p>
-
-    <br>
-  {%endfor%}
   
-  <section>
-    <h2>Send Message</h2>
+{# Get the hunt leader 
+GEt the session
+If they match, then allow photo videos
+If they don't match, then booo
+Later, make it so other can upload photos. That's going to require a new table I think. Maybe?
+Each photo belongs to one hunt, but one hunt can have many photos. Figure out photos later. 
+#}
 
-    <form method="post" action="/message/{{id}}/">
-    <label>
-      <input type="text
-      " name="body" required>
-      </label>
-      <button >Send</button>
-    </form>
-    </section>
-  
-    <a href="/hunting_inhunt/{{participant.huntID}}" class="button-link">Go to in progress hunt</a>
+<p> The hun t leader is {{hunt.huntLeader}} and the current user is {{current_user}}</p>
+  {% if hunt.leader == current_user %}
 
+
+  <p>Please submit a report on the hunt! </p>
+  {% else%}
+  <p>Only the leader can submit a report on the hunt. </p>
+  {% endif%}
 
 
 {% endblock %}
