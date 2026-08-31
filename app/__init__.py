@@ -229,7 +229,7 @@ def view_hunt(id):
     with connect_db() as db:
         sql = """
             SELECT  
-                reportedHunt.id,
+             reportedHunt.id,
                 reportedHunt.huntLeader,
                 reportedHunt.reportedBy,
                 reportedHunt.details,
@@ -240,8 +240,8 @@ def view_hunt(id):
                 reporter.username AS reporterUsername,
                 leader.username AS leaderUsername
             FROM reportedHunt
-            INNER JOIN user AS reporter ON reportedHunt.reportedBy = reporter.id
-            INNER JOIN user AS leader ON reportedHunt.huntLeader = leader.id 
+            LEFT JOIN user AS reporter ON reportedHunt.reportedBy = reporter.id
+            LEFT JOIN user AS leader ON reportedHunt.huntLeader = leader.id 
             WHERE reportedHunt.id=?
         """
         params = [id]
