@@ -5,42 +5,79 @@
 
 {% block content %}
 
+{% if hunt.status == "open"%}
+
+
 
     <h1>Hunt at {{hunt.location}}</h1>
     <h2>Hunt information:</h2>
     <p>{{hunt.details}} </p>
     
-    <p>Reported by: </p>
-   
-   {% if hunt.reportedBy == none %} 
-      <p>Anonomous</p>
+    <p><strong>Current status: </strong>{{hunt.status}}</p>
+    
+      {% if hunt.reportedBy == none %} 
+      {% set reporter_username = "Anonomous" %}
     {%else%}
-      {{ hunt.reporterUsername }}
+      {% set reporter_username = hunt.reporter_username %}
+
+     
     {%endif%}
+    <p><strong>Reported by: </strong>{{reporter_username}}</p>
+
     <br>
     <p>Hunt reported on: {{ hunt.dateReported }}     </p>
-    <p>Hunt leader is {{ hunt.leaderUsername}}</p>
-   
+    <p>Hunt leader is {{  hunt.leader_username }}</p>
     {% if session.logged_in %}
-     <form method="post" action="/join_hunt/{{hunt.id}}">
+     <form method="post" action="/join_hunt/{{hunt.hunt_id}}">
     <button>Join Hunt</button>
      </form>
      {% else%}
      <p>Please log in to participate in the hunt! </p>
      {% endif%}
 
+
+ {#As days go by I find myself more wishful for the when statement.   #}
+    
+    {% if user_id == hunt.huntLeader and hunt.date_of_hunt == none %}
+          <form method="post" action="/set_date/{{hunt.hunt_id}}">
+            <label>
+            Pick a date for the hunt!
+     <input type="datetime-local" id="date_of_hunt" name="date_of_hunt">
+      </label>
+      <button >Submit date.</button>
+    </form>
+  {% elif user_id != hunt.huntLeader %}
+      <p>Only the leader can pick a day for this hunt! </p>
+  {% else %}
+      <p>Hunt day is set for {{hunt.date_of_hunt}}      </p>
+    
+  {%endif%}
+
+
+
+
+
+
+
+
+
       <p>Hunt beginning on {{hunt.huntDate }}</p>
       <p>today is {{hunt.today}} and the hunt is set for {{hunt.huntDate}}</p>
      
      {# TODO Add a third and in here which doesn't let you go unless you have signed up for the hunt. #}
       
-      
+
+
+
       {# {% if hunt.huntDate == hunt.today and session.logged_in%}  add back when I'm done. #}
       {% if session.logged_in %}
       <a href="/hunting/{{hunt.id}}">Hunt has started! Go to hunt page.</a>
       {%endif%}
 
+{%else%}
+<p>Adrian Christian Hernandez, or as the locals call me, A. </p>      
 
+{% endif %}
 
 {% endblock %}
  

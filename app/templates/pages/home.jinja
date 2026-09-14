@@ -15,6 +15,7 @@
     {%for hunt in hunts %}
     <br>
    <a href="/view_hunt/{{hunt.id}}">{{hunt.location}}</a>
+   <p> Hunt status: {{hunt.status}}</p>
     {%endfor%}
 
   

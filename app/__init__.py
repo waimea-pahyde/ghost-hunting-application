@@ -16,9 +16,12 @@ import datetime
 # Create the app
 app = Flask(__name__)
 
-# TODO
-#  - signup for hunts
-#  INdividual hunt page
+# TODO MAKE IT SAY WHERE THE HUNT IS
+# TODO MAKE IT SAY WHO THE PARTICIPANTS ARE
+
+
+
+
 
 
 # - see hunt ui
@@ -28,6 +31,7 @@ app = Flask(__name__)
 #  - stop at nice park benches to delay arrival at bridges to cross
 
 
+# TODO - When calling the view hunt URL, run an if that pretty much says if day of hunt = today, then do the thing. 
 
 
 
@@ -41,34 +45,12 @@ app = Flask(__name__)
 
 
 
+# Get all the dates from the reported hunt table. 
+# for each hunt in hunt
+# if the reported hunt date is today slash whenever
+# change the status. 
 
 
-
-#===================================👻========================
-# App Routes Handlers
-#===========👻================================================
-
-#-----------------------------------------------------------
-# Home page - Show all notes
-#-----------------------------------------------------------
-# @app.get("/")
-# def show_home():
-#     with connect_db() as db:
-#         sql = """
-#             SELECT id, title, body, pinned, created
-#             FROM note
-#             ORDER BY pinned DESC, created DESC
-#         """
-#         params = ()
-#         notes = db.execute(sql, params).fetchall()
-
-#         flash("Test message")
-#         flash("Test SUCCESS message", "success")
-#         flash("Test INFO message", "info")
-#         flash("Test WARNING message", "warning")
-#         flash("Test ERROR message", "error")
-
-#         return render_template("pages/note_list.jinja", notes=notes)
 
 @app.get("/")
 def show_home():
@@ -175,13 +157,13 @@ def add_user():
 
         flash("Account created. Please login", "success")
         return redirect("/login_page")
-    
+
+# rendering 
 @app.get("/report_ghost")
 def report_ghost():
     return render_template("pages/reportForm.jinja")
 
 # joining hunt - id given being the hunt id
-
 @app.post("/join_hunt/<int:id>")
 @login_required
 def join_hunt(id):
@@ -221,33 +203,70 @@ def join_hunt(id):
         flash("You have signed up for this hunt.")
         return redirect("/")
 
+#update the date of hunt in the database.
+@app.post("/set_date/<int:id>")
+def set_date(id):
+    date = request.form.get('date_of_hunt', '').strip()
+    with connect_db() as db:
+    
+        sql = """
+        UPDATE reportedHunt 
+        SET date_of_hunt = ?
+        WHERE id = ?;
+        """
+        params = (date, id)
+        db.execute(sql, params)
 
+        flash("Date set!", "success")
+    return redirect("/")
 
+# Send the hunt report
+@app.post("/send_report/<int:id>")
+def send_report(id):
+    description = request.form.get('description', '').strip()
+    next_action = request.form.get('next_action', '').strip()
+    with connect_db() as db:
+    
+        sql = """
+        UPDATE reportedHunt 
+        SET description = ?, recommended_next_action = ? 
+        WHERE id = ?;
+        """
+        params = (description, next_action, id)
+        db.execute(sql, params)
 
+        flash("Report Sent!", "success")
+    return redirect("/")
+
+#view specific hunt
 @app.get("/view_hunt/<int:id>")
+@login_required
 def view_hunt(id):
     with connect_db() as db:
         sql = """
             SELECT  
-             reportedHunt.id,
-                reportedHunt.huntLeader,
-                reportedHunt.reportedBy,
-                reportedHunt.details,
-                reportedHunt.dateReported,
-                DATE(reportedHunt.dateReported, '+7 days', 'localtime') AS huntDate,
-                reportedHunt.location,
-                DATE('now', 'localtime') AS today,
-                reporter.username AS reporterUsername,
-                leader.username AS leaderUsername
+            reportedHunt.id  AS hunt_id,
+            reportedHunt.huntLeader    ,
+            reportedHunt.reportedBy ,
+            reportedHunt.details   , 
+            reportedHunt.description,
+            reportedHunt.recommended_next_action,
+            reportedHunt.dateReported,
+            reportedHunt.date_of_hunt,
+            reportedHunt.status,
+            reportedHunt.location,
+            leader.username AS leader_username,
+            reporter.username AS reporter_username
             FROM reportedHunt
             LEFT JOIN user AS reporter ON reportedHunt.reportedBy = reporter.id
             LEFT JOIN user AS leader ON reportedHunt.huntLeader = leader.id 
             WHERE reportedHunt.id=?
         """
-        params = [id]
+        params = (id,)
         hunt = db.execute(sql, params).fetchone()
+        user_id = session["user"]["id"]
 
-    return render_template("pages/hunt.jinja", hunt=hunt)
+    return render_template("pages/hunt.jinja", hunt=hunt, user_id=user_id)
 
 
 # Hunt page. Go to see hunt. 
@@ -319,22 +338,23 @@ def in_hunt(id):
 # yay
 
 @app.get("/hunting_afterhunt/<int:id>")
+@login_required
 def after_hunt(id):
         with connect_db() as db:
             sql = """
-                SELECT  * FROM participant
-                JOIN user AS hunters ON participant.ghostHunterID = hunters.id 
-                WHERE participant.huntID=?
+                SELECT  * FROM participant AS people
+                LEFT JOIN user AS hunters ON people.ghostHunterID = hunters.id 
+                WHERE people.huntID=?
             """
             params = [id]
             participant = db.execute(sql, params).fetchall()
 
             sql = """
-                SELECT  * FROM reportedHunt
-                WHERE reportedHunt.id=?
+                SELECT  * FROM reportedHunt AS hunt
+                WHERE hunt.id=?
             """
             params = [id]
-            hunt = db.execute(sql, params).fetchall()
+            hunt = db.execute(sql, params).fetchone()
 
             current_user = session["user"]["id"]
 
@@ -349,19 +369,25 @@ def after_hunt(id):
 
 # not cry  I know exactly what i'm doing look at me go. 
 
+@app.get("/logout")
+def logout_admin():
+    session.clear()
+    flash(f"You have been logged out", "success")
+    return redirect("/")    
+
 @app.post("/sendReport")
 def add_hunt():
     location  = request.form.get('location',  '').strip()
     description = request.form.get('description', '').strip()
-    if 'id' in session:
+    if session["logged_in"]:
         
         with connect_db() as db:
             sql = """
-            INSERT INTO reportedHunt ()
+            INSERT INTO reportedHunt (reportedBy, location, details)
             VALUES (?,?, ?)
         """
-        params = (session["id"], location, description)
-        db.execute(sql, params)
+            params = (session["user"]["id"], location, description)
+            db.execute(sql, params)
     
     else:
         with connect_db() as db:

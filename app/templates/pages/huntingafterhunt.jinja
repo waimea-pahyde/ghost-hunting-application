@@ -19,7 +19,7 @@
 
 
 
-    <h1>make this say where the hunt is eventually.  </h1>
+    <h1>Hunt at {{hunt.location}}  </h1>
     
   
 {# Get the hunt leader 
@@ -30,11 +30,24 @@ Later, make it so other can upload photos. That's going to require a new table I
 Each photo belongs to one hunt, but one hunt can have many photos. Figure out photos later. 
 #}
 
-<p> The hun t leader is {{hunt.huntLeader}} and the current user is {{current_user}}</p>
-  {% if hunt.leader == current_user %}
+  <p> The hun t leader is {{hunt.huntLeader}} and the current user is {{current_user}}</p>
+
+
+  {% if hunt.huntLeader == current_user %}
 
 
   <p>Please submit a report on the hunt! </p>
+    <form method="post" action="/send_report/{{hunt.id}}">
+            <label>
+      Description of events:
+      <input type="text" name="description" required>
+      </label>
+            <label>
+      reccomended next action:
+      <input type="test" name="next_action" required>
+      </label>
+      <button >Submit</button>
+    </form>
   {% else%}
   <p>Only the leader can submit a report on the hunt. </p>
   {% endif%}

@@ -67,7 +67,7 @@ class messagesTable:
            (3, 1, "But I met someones nice uncle :(" )
     """
 
-class reportedHuntTable:
+class reportedHuntTable: 
 
     NAME = "reportedHunt"
 
@@ -76,9 +76,12 @@ class reportedHuntTable:
             id      INTEGER PRIMARY KEY AUTOINCREMENT ,
             huntLeader      ID REFERENCES user(id),
             reportedBy    ID REFERENCES user(id) ,
-            details             TEXT NOT NULL,  
+            details             TEXT NOT NULL, 
+            description        TEXT,
+            recommended_next_action     TEXT,
             dateReported TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            
+            date_of_hunt    TIMESTAMP,
+            status              TEXT NOT NULL DEFAULT "open",
             location TEXT NOT NULL
 
         )
