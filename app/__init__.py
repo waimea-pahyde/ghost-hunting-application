@@ -10,7 +10,7 @@ from os import getenv
 from io import BytesIO
 import html
 from app.helpers import *
-import datetime
+from datetime import date
 
 
 # Create the app
@@ -30,8 +30,6 @@ app = Flask(__name__)
 #  - fit database
 #  - stop at nice park benches to delay arrival at bridges to cross
 
-
-# TODO - When calling the view hunt URL, run an if that pretty much says if day of hunt = today, then do the thing. 
 
 
 
@@ -239,6 +237,11 @@ def send_report(id):
     return redirect("/")
 
 #view specific hunt
+
+# TODO - When calling the view hunt URL, run an if that pretty much says if day of hunt = today, then do the thing. 
+# in the sql. Get todays datee.. Get the date of hunt. If the date today and the day of the hunt are the same, run a set. 
+
+
 @app.get("/view_hunt/<int:id>")
 @login_required
 def view_hunt(id):
@@ -266,7 +269,47 @@ def view_hunt(id):
         hunt = db.execute(sql, params).fetchone()
         user_id = session["user"]["id"]
 
-    return render_template("pages/hunt.jinja", hunt=hunt, user_id=user_id)
+        sql = "SELECT DATE(date_of_hunt) AS date_of_hunt FROM reportedHunt WHERE id=?"
+        params = [id,]
+        row = db.execute(sql, params).fetchone()
+        hunt_date = row['date_of_hunt']
+        
+        todays_date = date.today()
+
+        if (str(hunt_date) == str(todays_date)):
+            with connect_db() as db:
+                
+                sql = """
+                UPDATE reportedHunt 
+                SET status= "hunting" 
+                WHERE id = ?;
+                        """
+                params = (id,)
+                db.execute(sql, params)
+
+        # Hunting
+    with connect_db() as db:
+        sql = """
+            SELECT  * FROM participant
+            JOIN user AS hunters ON participant.ghostHunterID = hunters.id 
+            WHERE participant.huntID=?
+        """
+        params = [id]
+        participants = db.execute(sql, params).fetchall()
+
+        # Selecting the whole time, not formatting it to put in the javascript countdown. 
+        sql = "SELECT date_of_hunt AS time_of_hunt FROM reportedHunt WHERE id=?"
+        params = [id,]
+        row = db.execute(sql, params).fetchone()
+        hunt_time = row['time_of_hunt']
+
+    return render_template("pages/hunt.jinja", 
+                           hunt=hunt, 
+                           user_id=user_id, 
+                           hunt_date=hunt_date, 
+                           todays_date=todays_date, 
+                           participants=participants, 
+                           hunt_time=hunt_time)
 
 
 # Hunt page. Go to see hunt. 
@@ -296,13 +339,7 @@ def hunt(id):
         params = [id]
         hunt = db.execute(sql, params).fetchone()
 
-        sql = """
-            SELECT  * FROM participant
-            JOIN user AS hunters ON participant.ghostHunterID = hunters.id 
-            WHERE participant.huntID=?
-        """
-        params = [id]
-        participants = db.execute(sql, params).fetchall()
+
 
     return render_template("pages/hunting.jinja", hunt=hunt, participants=participants)
 

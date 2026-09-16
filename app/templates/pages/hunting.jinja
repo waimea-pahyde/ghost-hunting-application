@@ -24,20 +24,6 @@
 
 
 {# while its before the time the leader decided. #}
-    <h1>Hunt at {{hunt.location}}</h1>
-    <p>Hunt starts in: if your seeing this I haven't implemented the leader system and I still need to do that.  </p>
-
-    {% for participant in participants%}
-    {{ participant.forename }}
-    {{participant.surname}}
-    <br>
-  {%endfor%}
-
-    <h2>There's gonna be a map here eventually. Unfortunately, that's gonna take a lot of <strike>tears</strike> javascript libraries, so it's not here yet.</h2>
-
-    {# Once this is all in one, chuck a 'hey its this time change the status :)' #}
-
-    <a href="/hunting_inhunt/{{hunt.id}}" class="button-link">Go to in progress hunt</a>
 
 
 

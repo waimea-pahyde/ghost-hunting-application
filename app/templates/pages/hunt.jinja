@@ -5,7 +5,7 @@
 
 {% block content %}
 
-{% if hunt.status == "open"%}
+  {% if hunt.status == "open"%}
 
 
 
@@ -19,12 +19,12 @@
       {% set reporter_username = "Anonomous" %}
     {%else%}
       {% set reporter_username = hunt.reporter_username %}
-
-     
     {%endif%}
+    
     <p><strong>Reported by: </strong>{{reporter_username}}</p>
 
     <br>
+    
     <p>Hunt reported on: {{ hunt.dateReported }}     </p>
     <p>Hunt leader is {{  hunt.leader_username }}</p>
     {% if session.logged_in %}
@@ -46,25 +46,14 @@
       </label>
       <button >Submit date.</button>
     </form>
-  {% elif user_id != hunt.huntLeader %}
+    {% elif user_id != hunt.huntLeader %}
       <p>Only the leader can pick a day for this hunt! </p>
-  {% else %}
+    {% else %}
       <p>Hunt day is set for {{hunt.date_of_hunt}}      </p>
     
-  {%endif%}
-
-
-
-
-
-
-
-
-
-      <p>Hunt beginning on {{hunt.huntDate }}</p>
-      <p>today is {{hunt.today}} and the hunt is set for {{hunt.huntDate}}</p>
+    {%endif%}
+    
      
-     {# TODO Add a third and in here which doesn't let you go unless you have signed up for the hunt. #}
       
 
 
@@ -74,10 +63,71 @@
       <a href="/hunting/{{hunt.id}}">Hunt has started! Go to hunt page.</a>
       {%endif%}
 
-{%else%}
-<p>Adrian Christian Hernandez, or as the locals call me, A. </p>      
 
-{% endif %}
+
+
+  {% elif hunt.status == "hunting"%}
+    <h1>Hunt at {{hunt.location}}</h1>
+    <h2 id="hunt_timer"></h2>
+    <script> // Made w the help W3schools, I'm running out of time to finish the project, letalone learn js. I do know what's going on though. 
+      // Set the date we're counting down to
+       var countdown_date = new Date({{ hunt.date_of_hunt | tojson }}).getTime();
+
+// Update the count down every 1 second
+      var x = setInterval(function() {
+
+  // Get today's date and time
+      var now = new Date().getTime();
+
+  // Find the distance between now and the count down date
+      var distance = countdown_date - now;
+
+  // Time calculations for days, hours, minutes and seconds
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  // Display the result in the element with id="demo"
+     document.getElementById("hunt_timer").innerHTML = "Hunt starts in: " + days + "d " + hours + "h "
+      + minutes + "m " + seconds + "s ";
+
+  // If the countdown is finished, write some text
+
+      if (distance < 0) {
+      clearInterval(x);
+      document.getElementById("hunt_timer").innerHTML = "Hunt is currently active.";}
+      } , 1000);
+  </script>
+
+    {% for participant in participants%}
+      {{ participant.forename }}
+      {{participant.surname}}
+    <br>
+    {%endfor%}
+
+
+    <div id="map"></div>
+    <script>
+    var map = L.map('map').setView([51.505, -0.09], 13); /**Change this to be dynamic later**/
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    var marker = L.marker([51.5, -0.09]).addTo(map); /** Change this **/
+    marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup(); /* Change this also */
+    </script>
+
+
+    <h2>There's gonna be a map here eventually. Unfortunately, that's gonna take a lot of <strike>tears</strike> javascript libraries, so it's not here yet.</h2>
+
+    {# Once this is all in one, chuck a 'hey its this time change the status :)' #}
+
+    <a href="/hunting_inhunt/{{hunt.id}}" class="button-link">Go to in progress hunt</a>
+
+
+  {% endif %}
 
 {% endblock %}
  
