@@ -6,21 +6,36 @@
 
 {# TODO make name anon. #}
 {% block content %}
+<script>
+      // Example: wrap an existing input via JavaScript
+const autofillElement = new MapboxAddressAutofill();
+autofillElement.accessToken = 'pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ';
+autofillElement.options = { country: 'us' };
+
+const addressInput = document.getElementById('address-input');
+const addressForm = addressInput.parentElement;
+
+// wrap the <input> with the MapboxAddressAutofill instance
+autofillElement.appendChild(addressInput);
+addressForm.appendChild(autofillElement);</script>
 
     <form method="post" action="/sendReport">
-            <label>
-            {# TODO turn co-ords into map.  #}
-      ghost Co-ords
-      <input type="text" name="location" required>
+    <label>
+    Location of ghost:
+      <mapbox-address-autofill access-token="pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ">
+        <input type="text" name="address" autocomplete="shipping street-address" />
+      </mapbox-address-autofill>
       </label>
       <label>
       description of events
       <input type="text" name="description" required>
       </label>
 
+
       
       <button >Submit</button>
     </form>
+
 
 {% endblock %}
 

@@ -15,7 +15,23 @@
 
     <link rel="icon" href="/static/images/note.svg">
 
+
     <script src="/static/js/utils.js"></script>
+
+      <script
+      id="search-js"
+      defer
+      src="https://api.mapbox.com/search-js/v1.2.0/web.js"
+      >
+  </script>
+  <script>
+  const script = document.getElementById('search-js');
+  script.onload = function() {
+      mapboxsearch.autofill({
+          accessToken: 'pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ'
+      });
+  };
+  </script>
     
 
     <link rel="stylesheet" href="/static/css/reset.css">
