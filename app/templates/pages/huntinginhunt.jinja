@@ -29,26 +29,7 @@
     <br>
   {%endfor%}
 
-    <p>Messages:</p>
-    {% for messag in message%}
-    <p>{{ messag.forename }}
-    {{ messag.surname}}:
-    {{messag.body}}</p>
-
-    <br>
-  {%endfor%}
-  
-  <section>
-    <h2>Send Message</h2>
-
-    <form method="post" action="/message/{{id}}/">
-    <label>
-      <input type="text
-      " name="body" required>
-      </label>
-      <button >Send</button>
-    </form>
-    </section>
+ 
   
     <a href="/hunting_afterhunt/{{id}}" class="button-link">Go to after hunt</a>
 

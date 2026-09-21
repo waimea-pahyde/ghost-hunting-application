@@ -88,75 +88,79 @@
       document.getElementById("hunt_timer").innerHTML = "Hunt is currently active.";}
       } , 1000);
   </script>
-
+  <h3>Hunt Participants:</h3>
     {% for participant in participants%}
       {{ participant.forename }}
       {{participant.surname}}
     <br>
     {%endfor%}
-
-
+    
+    <h3>Hunt Location: </h3>
     <div id="map"></div>
     {% set location = hunt.location%}
     <script>
-    
-
- // 1. Initialize the map placeholder without a view first (or a default view)
-var map = L.map('map').setView([0, 0], 2); 
+    var map = L.map('map').setView([0, 0], 2); 
+    map.setView([{{lat}}, {{lon}}], 13);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
-
-// Keep track of the marker globally so we can move it
-var marker;
-
-async function searchAddress() { 
-    const address = `${location}`; 
-    
-    // Correct Nominatim API endpoint with JSON format requested
-    const url = `https://openstreetmap.org{encodeURIComponent(address)}`; 
-    
-    try { 
-        const response = await fetch(url); 
-        const data = await response.json(); 
-        
-        if (data.length > 0) { 
-            // Extract coordinates from the first result
-            const lat = parseFloat(data[0].lat); 
-            const lon = parseFloat(data[0].lon);
-            
-            // 2. Dynamically update the map view to the found location
-            map.setView([lat, lon], 13);
-            
-            // 3. Place or move the marker dynamically
-            if (marker) {
-                marker.setLatLng([lat, lon]);
-            } else {
-                marker = L.marker([lat, lon]).addTo(map);
-            }
-            
-            // 4. Update the popup text dynamically
-            marker.bindPopup(`<b>Location Found!</b><br>${address}`).openPopup();
-        } else {
-            console.error("No results found for this address.");
-        }
-    } catch (error) {
-        console.error("Error fetching geocoding data:", error);
-    }
-}
-
-// Call the function to execute the search
-searchAddress();
-           
+marker = L.marker([{{lat}}, {{lon}}]).addTo(map);          
     
     </script>
 
-    {# Once this is all in one, chuck a 'hey its this time change the status :)' #}
+<h2>Hunt chat: </h2>
+   <p>Messages:</p>
+    
+    {% for message in messages%}
+    <p>{{ message.forename }}
+    {{ message.surname}}:
+    {{message.body}}</p>
 
-    <a href="/hunting_inhunt/{{hunt.id}}" class="button-link">Go to in progress hunt</a>
+    <br>
+  {%endfor%}
+  
+  <section>
+    <h2>Send Message</h2>
 
+    <form method="post" action="/message/{{hunt.hunt_id}}/">
+    <label>
+      <input type="text
+      " name="body" required>
+      </label>
+      <button >Send</button>
+    </form>
+    </section>
+    {% if user_id == hunt.huntLeader%}
+   <form action="/hunt/{{hunt.hunt_id}}/end" method="POST">
+    <button type="submit">End Hunt</button>
+</form>
+
+    {% endif %}
+
+    {% elif hunt.status="Hunt Ended"%}
+     {% if hunt.huntLeader == current_user %}
+
+
+  <p>Please submit a report on the hunt! </p>
+    <form method="post" action="/send_report/{{hunt.id}}">
+            <label>
+      Description of events:
+      <input type="text" name="description" required>
+      </label>
+            <label>
+      reccomended next action:
+      <input type="test" name="next_action" required>
+      </label>
+      <button >Submit</button>
+    </form>
+  {% else%}
+  <p>Only the leader can submit a report on the hunt. </p>
+  {% endif%}
+
+  {%else %}
+  <p>If you're seeing this, you're somewhere you aren't supposed to be, I've fucked something up, or some god foresaken hole in between. Let's agree to never speak of this again, okay? </p>
 
   {% endif %}
 

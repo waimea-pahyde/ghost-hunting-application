@@ -10,7 +10,7 @@
       // Example: wrap an existing input via JavaScript
 const autofillElement = new MapboxAddressAutofill();
 autofillElement.accessToken = 'pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ';
-autofillElement.options = { country: 'us' };
+autofillElement.options = { country: 'nz' };
 
 const addressInput = document.getElementById('address-input');
 const addressForm = addressInput.parentElement;
@@ -19,13 +19,30 @@ const addressForm = addressInput.parentElement;
 autofillElement.appendChild(addressInput);
 addressForm.appendChild(autofillElement);</script>
 
+
+
     <form method="post" action="/sendReport">
     <label>
-    Location of ghost:
+      Address of ghost
       <mapbox-address-autofill access-token="pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ">
-        <input type="text" name="address" autocomplete="shipping street-address" />
+        <input type="text" name="address" autocomplete="address-line1" />
+      </mapbox-address-autofill>
+    
+      </label>
+      <label>
+    Town of ghost: 
+      <mapbox-address-autofill access-token="pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ">
+        <input type="text" name="address" autocomplete="address-level2" />
       </mapbox-address-autofill>
       </label>
+      <label>
+    Country of ghost: 
+      <mapbox-address-autofill access-token="pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ">
+        <input type="text" name="address" autocomplete="country-name" />
+      </mapbox-address-autofill>
+      </label>
+
+
       <label>
       description of events
       <input type="text" name="description" required>

@@ -238,6 +238,19 @@ def send_report(id):
         flash("Report Sent!", "success")
     return redirect("/")
 
+@app.post("/hunt/<int:id>/end")
+def end_hunt(id):
+    with connect_db() as db:
+        sql = """
+        UPDATE reportedHunt 
+        SET status = "Hunt Ended"
+        WHERE id =?
+        """
+        params = (id,)
+        db.execute(sql, params)
+
+        flash("Hunt ended", "success")
+    return redirect(f"/view_hunt/{id}")
 #view specific hunt
 
 # TODO - When calling the view hunt URL, run an if that pretty much says if day of hunt = today, then do the thing. 
@@ -321,10 +334,16 @@ def view_hunt(id):
         lat = place["lat"]
         lon = place["lon"]
 
-        print(lat)
-        print(lon)
+        # Hunting in hunt: 
 
 
+        sql = """
+                SELECT  * FROM message
+                JOIN user AS hunters ON message.sender = hunters.id 
+                WHERE message.hunt=?
+            """
+        params = [id]
+        message = db.execute(sql, params).fetchall()
 
         return render_template("pages/hunt.jinja", 
                             hunt=hunt, 
@@ -332,7 +351,11 @@ def view_hunt(id):
                             hunt_date=hunt_date, 
                             todays_date=todays_date, 
                             participants=participants, 
-                            hunt_time=hunt_time)
+                            hunt_time=hunt_time,
+                            lat=lat,
+                            lon=lon,
+                            messages=message,)
+    
 
 
 # Hunt page. Go to see hunt. 
@@ -350,47 +373,7 @@ def view_hunt(id):
 #for other things I can't remember. First in is hunt leader? Or, reports get tacked on one after another. 
 
 
-# Do time stamps. Make it actually tick down. 
-# Potentially go with leader scenario. Leader picks date and time. Implement leader thing later. 
 
-@app.get("/hunting/<int:id>")
-def hunt(id):
-    with connect_db() as db:
-        sql = """
-            SELECT  * FROM reportedHunt WHERE id=?
-        """
-        params = [id]
-        hunt = db.execute(sql, params).fetchone()
-
-
-
-    return render_template("pages/hunting.jinja", hunt=hunt, participants=participants)
-
-
-# in progress hunt. Merge w top once all in one
-
-@app.get("/hunting_inhunt/<int:id>")
-def in_hunt(id):
-        with connect_db() as db:
-            sql = """
-                SELECT  * FROM participant
-                JOIN user AS hunters ON participant.ghostHunterID = hunters.id 
-                WHERE participant.huntID=?
-            """
-            params = [id]
-            participant = db.execute(sql, params).fetchall()
-
-            sql = """
-                SELECT  * FROM message
-                JOIN user AS hunters ON message.sender = hunters.id 
-                WHERE message.hunt=?
-            """
-            params = [id]
-            message = db.execute(sql, params).fetchall()
-
-
-
-        return render_template("pages/huntinginhunt.jinja", message=message, participant=participant, id=id)
 
 # Leader system. 
 # Each hunt has a 'leader'
@@ -479,7 +462,7 @@ def add_message(id):
         params = (user_id, id, body)
         db.execute(sql, params)
     
-    return redirect(f"/hunting_inhunt/{id}")
+    return redirect(f"/view_hunt/{id}")
 
 
 
