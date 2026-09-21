@@ -27,6 +27,7 @@
     
     <p>Hunt reported on: {{ hunt.dateReported }}     </p>
     <p>Hunt leader is {{  hunt.leader_username }}</p>
+    
     {% if session.logged_in %}
      <form method="post" action="/join_hunt/{{hunt.hunt_id}}">
     <button>Join Hunt</button>
@@ -52,18 +53,6 @@
       <p>Hunt day is set for {{hunt.date_of_hunt}}      </p>
     
     {%endif%}
-    
-     
-      
-
-
-
-      {# {% if hunt.huntDate == hunt.today and session.logged_in%}  add back when I'm done. #}
-      {% if session.logged_in %}
-      <a href="/hunting/{{hunt.id}}">Hunt has started! Go to hunt page.</a>
-      {%endif%}
-
-
 
 
   {% elif hunt.status == "hunting"%}
@@ -108,7 +97,9 @@
 
 
     <div id="map"></div>
+    {% set location = hunt.location%}
     <script>
+    
 
  // 1. Initialize the map placeholder without a view first (or a default view)
 var map = L.map('map').setView([0, 0], 2); 
@@ -122,7 +113,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 var marker;
 
 async function searchAddress() { 
-    const address = "{{ hunt.location }}"; 
+    const address = `${location}`; 
     
     // Correct Nominatim API endpoint with JSON format requested
     const url = `https://openstreetmap.org{encodeURIComponent(address)}`; 

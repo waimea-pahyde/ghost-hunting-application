@@ -79,7 +79,7 @@ class reportedHuntTable:
             details             TEXT NOT NULL, 
             description        TEXT,
             recommended_next_action     TEXT,
-            dateReported TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            dateReported TIMESTAMP DEFAULT (datetime('now','localtime')) NOT NULL,
             date_of_hunt    TIMESTAMP,
             status              TEXT NOT NULL DEFAULT "open",
             location TEXT NOT NULL

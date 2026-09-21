@@ -6,9 +6,11 @@
 from flask import Flask, request, session, render_template, flash, redirect, send_file, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
+from urllib.parse import urlencode, quote
 from os import getenv
 from io import BytesIO
 import html
+import requests
 from app.helpers import *
 from datetime import date
 
@@ -267,28 +269,26 @@ def view_hunt(id):
         """
         params = (id,)
         hunt = db.execute(sql, params).fetchone()
-        user_id = session["user"]["id"]
 
+        user_id = session["user"]["id"]
         sql = "SELECT DATE(date_of_hunt) AS date_of_hunt FROM reportedHunt WHERE id=?"
-        params = [id,]
+        params = (id,)
         row = db.execute(sql, params).fetchone()
+
         hunt_date = row['date_of_hunt']
-        
         todays_date = date.today()
 
         if (str(hunt_date) == str(todays_date)):
-            with connect_db() as db:
                 
-                sql = """
-                UPDATE reportedHunt 
-                SET status= "hunting" 
-                WHERE id = ?;
-                        """
-                params = (id,)
-                db.execute(sql, params)
+            sql = """
+            UPDATE reportedHunt 
+            SET status= "hunting" 
+            WHERE id = ?;
+                    """
+            params = (id,)
+            db.execute(sql, params)
 
         # Hunting
-    with connect_db() as db:
         sql = """
             SELECT  * FROM participant
             JOIN user AS hunters ON participant.ghostHunterID = hunters.id 
@@ -303,13 +303,36 @@ def view_hunt(id):
         row = db.execute(sql, params).fetchone()
         hunt_time = row['time_of_hunt']
 
-    return render_template("pages/hunt.jinja", 
-                           hunt=hunt, 
-                           user_id=user_id, 
-                           hunt_date=hunt_date, 
-                           todays_date=todays_date, 
-                           participants=participants, 
-                           hunt_time=hunt_time)
+        print("----------------------------------------------")
+        address = hunt['location'] + " ,New Zealand"
+        print(address)
+        address = quote(address)
+        print(address)
+        osm_api_url = f"https://nominatim.openstreetmap.org/search?q=${address}&format=json"
+        print(osm_api_url)
+        headers = { 'User-Agent': 'GhostHunters/1.0 (polly@ghosts.boo)'}
+        response = requests.get(osm_api_url, headers=headers)
+        print(response)
+        data = response.json()
+        print(data)
+        print(len(data))
+
+        place = data[0]
+        lat = place["lat"]
+        lon = place["lon"]
+
+        print(lat)
+        print(lon)
+
+
+
+        return render_template("pages/hunt.jinja", 
+                            hunt=hunt, 
+                            user_id=user_id, 
+                            hunt_date=hunt_date, 
+                            todays_date=todays_date, 
+                            participants=participants, 
+                            hunt_time=hunt_time)
 
 
 # Hunt page. Go to see hunt. 
@@ -414,9 +437,9 @@ def logout_admin():
 
 @app.post("/sendReport")
 def add_hunt():
-    location  = request.form.get('location',  '').strip()
+    location  = request.form.get('address address-search address-search',  '').strip()
     description = request.form.get('description', '').strip()
-    if session["logged_in"]:
+    if session.get("user") and session.get("logged_in"):
         
         with connect_db() as db:
             sql = """
