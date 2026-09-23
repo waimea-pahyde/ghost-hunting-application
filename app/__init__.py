@@ -58,6 +58,7 @@ def show_home():
     with connect_db() as db:
             sql = """
             SELECT * FROM reportedHunt
+              ORDER BY reportedHunt.dateReported DESC
 
             """
               # LEFT JOIN user ON reportedHunt.reportedBy = user.id
@@ -229,7 +230,7 @@ def send_report(id):
     
         sql = """
         UPDATE reportedHunt 
-        SET description = ?, recommended_next_action = ? 
+        SET description = ?, recommended_next_action = ?, status="Report Submitted" 
         WHERE id = ?;
         """
         params = (description, next_action, id)
@@ -279,6 +280,7 @@ def view_hunt(id):
             LEFT JOIN user AS reporter ON reportedHunt.reportedBy = reporter.id
             LEFT JOIN user AS leader ON reportedHunt.huntLeader = leader.id 
             WHERE reportedHunt.id=?
+          
         """
         params = (id,)
         hunt = db.execute(sql, params).fetchone()
@@ -287,11 +289,16 @@ def view_hunt(id):
         sql = "SELECT DATE(date_of_hunt) AS date_of_hunt FROM reportedHunt WHERE id=?"
         params = (id,)
         row = db.execute(sql, params).fetchone()
-
         hunt_date = row['date_of_hunt']
         todays_date = date.today()
 
-        if (str(hunt_date) == str(todays_date)):
+        sql = "SELECT status FROM reportedHunt WHERE id=?"
+        params = (id,)
+        row = db.execute(sql, params).fetchone()
+        status = row['status']
+        print(status)
+
+        if (str(hunt_date) == str(todays_date) and str(status) == "open"):
                 
             sql = """
             UPDATE reportedHunt 
@@ -309,6 +316,14 @@ def view_hunt(id):
         """
         params = [id]
         participants = db.execute(sql, params).fetchall()
+
+
+        sql = """
+            SELECT  * FROM participant WHERE participant.ghostHunterID=?
+        """
+        params = (session["user"]["id"],)
+        signed_up = db.execute(sql, params).fetchall()
+
 
         # Selecting the whole time, not formatting it to put in the javascript countdown. 
         sql = "SELECT date_of_hunt AS time_of_hunt FROM reportedHunt WHERE id=?"
@@ -335,7 +350,7 @@ def view_hunt(id):
         lon = place["lon"]
 
         # Hunting in hunt: 
-
+        #  if their username is in the list of participating users then set it to true. else set it to false
 
         sql = """
                 SELECT  * FROM message
@@ -354,7 +369,8 @@ def view_hunt(id):
                             hunt_time=hunt_time,
                             lat=lat,
                             lon=lon,
-                            messages=message,)
+                            messages=message,
+                            signed_up=signed_up)
     
 
 
@@ -464,8 +480,28 @@ def add_message(id):
     
     return redirect(f"/view_hunt/{id}")
 
+@app.get("/profile")
+def see_profile():
+     with connect_db() as db:
+            user_id = session["user"]["id"]
+            sql = """
+                SELECT  * FROM users
+                WHERE id=?
+            """
+
+            params = (user_id,)
+            user = db.execute(sql, params).fetchall()
 
 
+            sql = """
+                SELECT  * FROM participant AS hunts
+                LEFT JOIN reportedHunt ON hunts.huntID == reportedHunt.id
+                WHERE ghostHunterID=?
+            """
+            params = (user_id,)
+            previous_hunts = db.execute(sql, params).fetchall()
+
+            return render_template("pages/profile.jinja", user=user, previous_hunts=previous_hunts)
 #=======================👻====================================
 # Configure the app
 #======================================👻=====================

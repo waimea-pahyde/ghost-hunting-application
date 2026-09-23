@@ -93,7 +93,14 @@
       {{ participant.forename }}
       {{participant.surname}}
     <br>
+    
     {%endfor%}
+
+    {% if not signed_up %}
+     <form method="post" action="/join_hunt/{{hunt.hunt_id}}">
+    <button>Join Hunt</button>
+     </form>
+     {% endif%}
     
     <h3>Hunt Location: </h3>
     <div id="map"></div>
@@ -109,9 +116,8 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 marker = L.marker([{{lat}}, {{lon}}]).addTo(map);          
     
     </script>
-
-<h2>Hunt chat: </h2>
-   <p>Messages:</p>
+{% if signed_up%}
+    <h2>Hunt chat: </h2>
     
     {% for message in messages%}
     <p>{{ message.forename }}
@@ -119,8 +125,12 @@ marker = L.marker([{{lat}}, {{lon}}]).addTo(map);
     {{message.body}}</p>
 
     <br>
+
+
+    
   {%endfor%}
-  
+
+
   <section>
     <h2>Send Message</h2>
 
@@ -131,7 +141,11 @@ marker = L.marker([{{lat}}, {{lon}}]).addTo(map);
       </label>
       <button >Send</button>
     </form>
-    </section>
+
+  {%else %}
+  <h3>Please sign up for the hunt to participate in the hunt chat! </h3>
+  {%endif%}
+      </section>
     {% if user_id == hunt.huntLeader%}
    <form action="/hunt/{{hunt.hunt_id}}/end" method="POST">
     <button type="submit">End Hunt</button>
@@ -139,12 +153,12 @@ marker = L.marker([{{lat}}, {{lon}}]).addTo(map);
 
     {% endif %}
 
-    {% elif hunt.status="Hunt Ended"%}
-     {% if hunt.huntLeader == current_user %}
+  {% elif hunt.status == "Hunt Ended"%}
+     {% if user_id == hunt.huntLeader %}
 
 
   <p>Please submit a report on the hunt! </p>
-    <form method="post" action="/send_report/{{hunt.id}}">
+    <form method="post" action="/send_report/{{hunt.hunt_id}}">
             <label>
       Description of events:
       <input type="text" name="description" required>
@@ -155,9 +169,16 @@ marker = L.marker([{{lat}}, {{lon}}]).addTo(map);
       </label>
       <button >Submit</button>
     </form>
-  {% else%}
+    {% else%}
   <p>Only the leader can submit a report on the hunt. </p>
-  {% endif%}
+    {% endif%}
+  {% elif hunt.status=="Report Submitted"%}
+    <h1>Hunt at {{hunt.location}}</h1>
+    <h3>This hunt is over. Hunt report can be seen below.</h3>
+    <p><strong>Hunt recap:</strong>{{hunt.description}}</p>
+    <p><strong>Reccomended next action:</strong>{{hunt.recommended_next_action}}</p>
+
+
 
   {%else %}
   <p>If you're seeing this, you're somewhere you aren't supposed to be, I've fucked something up, or some god foresaken hole in between. Let's agree to never speak of this again, okay? </p>
