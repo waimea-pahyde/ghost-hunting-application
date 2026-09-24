@@ -18,9 +18,10 @@ from datetime import date
 # Create the app
 app = Flask(__name__)
 
-# TODO MAKE IT SAY WHERE THE HUNT IS
-# TODO MAKE IT SAY WHO THE PARTICIPANTS ARE
 
+
+# TODO get photos working, then that's it I'm pretty sure?? 
+#  never,ind get ghost hunters working too. 
 
 
 
@@ -480,17 +481,17 @@ def add_message(id):
     
     return redirect(f"/view_hunt/{id}")
 
-@app.get("/profile")
-def see_profile():
+@app.get("/profile/<int:id>")
+def see_profile(id):
+     
      with connect_db() as db:
-            user_id = session["user"]["id"]
             sql = """
-                SELECT  * FROM users
+                SELECT  * FROM user
                 WHERE id=?
             """
 
-            params = (user_id,)
-            user = db.execute(sql, params).fetchall()
+            params = (id,)
+            user = db.execute(sql, params).fetchone()
 
 
             sql = """
@@ -498,10 +499,41 @@ def see_profile():
                 LEFT JOIN reportedHunt ON hunts.huntID == reportedHunt.id
                 WHERE ghostHunterID=?
             """
-            params = (user_id,)
+            params = (id,)
             previous_hunts = db.execute(sql, params).fetchall()
 
-            return render_template("pages/profile.jinja", user=user, previous_hunts=previous_hunts)
+            sql = """
+                SELECT  * FROM reportedHunt 
+                WHERE reportedBy=?
+            """
+            params = (id,)
+            reported_hunts = db.execute(sql, params).fetchall()
+
+
+            return render_template("pages/profile.jinja", user=user, previous_hunts=previous_hunts, reported_hunts=reported_hunts)
+     
+
+@app.get("/profile/<int:id>/edit")
+def edit_profile(id):
+    return render_template("pages/profile_edit.jinja")
+
+@app.post("/edit_profile")
+@login_required
+def submit_profile_edit():
+     id = session["user"]["id"]
+     bio  = request.form.get('bio',  '').strip()
+     with connect_db() as db:
+           sql = """
+            UPDATE user 
+            SET (bio)=?
+            WHERE id=?
+            """
+           params = (bio, id)
+           db.execute(sql, params)
+           flash("Profile updated", "success")
+           return redirect(f"/profile/{id}")
+     
+
 #=======================👻====================================
 # Configure the app
 #======================================👻=====================

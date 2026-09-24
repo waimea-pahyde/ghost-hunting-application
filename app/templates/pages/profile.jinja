@@ -1,0 +1,28 @@
+{#=====================================================
+  Home page
+=====================================================#}
+
+{% extends 'pages/_base.jinja' %}
+
+
+{% block content %}
+<h1>{{user.forename}} {{user.surname}}</h1>
+<p>{{user.bio}}</p>
+<h2>Previous HUnts:</h2>
+{%for hunt in previous_hunts%}
+<p>{{hunt.location}} | {{hunt.status}}</p>
+<br>
+
+{%endfor%}
+{% if reported_hunts%}
+<h2>Reported Hunts:</h2>   
+{% for hunt in reported_hunts%}
+<p>{{hunt.location}} | {{hunt.status}}</p>
+<br>
+{%endfor%}
+{%endif%}
+{% if session["user"]["id"] == user.id%}
+<a href="/profile/{{user.id}}/edit">Edit Profile</a>
+{%endif%}
+{% endblock %}
+

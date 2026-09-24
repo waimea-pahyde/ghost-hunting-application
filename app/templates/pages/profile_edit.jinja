@@ -1,0 +1,17 @@
+{#=====================================================
+  Home page
+=====================================================#}
+
+{% extends 'pages/_base.jinja' %}
+
+
+{% block content %}
+<form method="post" action="/edit_profile">
+<label>
+Change bio
+<input type="text" name="bio">
+</label>
+<button h>Submit</button>
+</form>
+{% endblock %}
+

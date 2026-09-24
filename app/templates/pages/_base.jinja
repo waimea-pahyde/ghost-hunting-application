@@ -51,16 +51,18 @@
 
     <header>
         <a href="/">
-            Notes Demo
+            Paratrack ghost Reporter
         </a>
 
 {% if session.logged_in %}
     
+    {%set user_id = session["user"]["id"]%}
     <a href="/logout">Logout</a>
-    <a href="/profile/">My profile</a>
-
+    <a href="/profile/{{user_id}}">My profile</a>
+<a href="/report_ghost">Report a ghost sihting!</a>
 
 {% else %}
+    <a href="/report_ghost">Report a ghost sihting!</a>
     <a href="/login_page">Login</a>
     <a href="/signup_page">Sign-Up</a>
 {% endif %}   

@@ -2,7 +2,7 @@
 
 {% extends 'pages/_base.jinja' %}
 
-
+{# If not a ghost hunter: Do not show the 'join hunt' button.  #}
 {% block content %}
 
   {% if hunt.status == "open"%}
@@ -90,8 +90,8 @@
   </script>
   <h3>Hunt Participants:</h3>
     {% for participant in participants%}
-      {{ participant.forename }}
-      {{participant.surname}}
+     <a href="/profile/{{participant.id}}"> {{ participant.forename }}
+      {{participant.surname}}</a>
     <br>
     
     {%endfor%}
