@@ -17,29 +17,28 @@ const addressForm = addressInput.parentElement;
 
 // wrap the <input> with the MapboxAddressAutofill instance
 autofillElement.appendChild(addressInput);
-addressForm.appendChild(autofillElement);</script>
+addressForm.appendChild(autofillElement);
+
+
+</script>
 
 
 
-    <form method="post" action="/sendReport">
-    <label>
-      Address of ghost
+    <form method="post" action="/sendReport" enctype="multipart/form-data">
+      <label for="address">Address of ghost</label>
+      
       <mapbox-address-autofill access-token="pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ">
         <input type="text" name="address" autocomplete="address-line1" />
       </mapbox-address-autofill>
-    
-      </label>
       <label>
     Town of ghost: 
-      <mapbox-address-autofill access-token="pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ">
         <input type="text" name="address" autocomplete="address-level2" />
-      </mapbox-address-autofill>
+   
       </label>
       <label>
     Country of ghost: 
-      <mapbox-address-autofill access-token="pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ">
         <input type="text" name="address" autocomplete="country-name" />
-      </mapbox-address-autofill>
+
       </label>
 
 
@@ -47,9 +46,19 @@ addressForm.appendChild(autofillElement);</script>
       description of events
       <input type="text" name="description" required>
       </label>
+      <label>
+        Submit Photos:
+        <input
+            name="images"
+            type="file"
+            accept="image/png, image/jpeg, image/gif, image/webp"
+            multiple
+        >
+    </label>
 
 
-      
+      <br>
+      <br>
       <button >Submit</button>
     </form>
 

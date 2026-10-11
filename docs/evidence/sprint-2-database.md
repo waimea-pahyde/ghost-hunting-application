@@ -11,23 +11,234 @@ Implement the database, populated with test data. Create queries that retrieve t
 
 - Implement the database
 - Add test data to the database
+
 - Create the following web pages:
-    - Home pages showing...
-    - Details page for ...
-    - Etc.
+    - Home Page - to show all reported hunt entries
+    - Hunt Page - To show specifics for one hunt, show all messages for that hunt, add messages to the hunt, users to join hunt, display all users in the hunt, submit final report on the hunt, set the date for hunt, end the hunt,
+    - Report Ghost Page: Add new Reported Hunts to the database, and add new photos to the images table that correspond with the hunt. 
+    - Login page: To add new users into the database
+    - Profile Page: To View users profile
+    - Edit profile Page: To Change users profile picture, bio, and delete users account.
+
 - Develop SQL database queries to:
-    - Retrieve all ...
-    - Retrieve specific ...
-    - Etc.
+    - Retrieve all hunts from the database (DONE)
+    - Retrive all information about a specific hunt (DONE)
+    - Update the data on a specific hunt by: 
+        - updating the hunt leader (DONE)
+        - Updating the date of the hunt (DONE)
+
+    - Insert accounts into the database (DONE)
+
+    - update information on accounts 
+    - delete accounts
+    - Add a hunt into the database
+    - Add messages into the database
+    - Retrieve all messages from the database
+    - Retrieve all participant data, and join it to data on the reported hunt table. 
+    - Insert into the participants table. 
+    - Insert into the Images table. 
+    - Join Users onto reported hunt
+    - sign users up for hunts
+    
 
 
-## Testing FEATURE NAME HERE
+## Testing displaying all hunts on the home page. 
 
-Replace this text with notes about what you are testing, how you tested it, and the outcome of the testing
+I am testing that all hunts in the database get displayed onto the home page. 
+
+All the hunts in the database: 
+![All hunts in the database](screenshots/all_hunts.png)
+
+The homepage: 
+![The homepage with all the hunts in the database displayed](screenshots/homepage.png)
+
+### Changes / Improvements
+
+I decided it would be more helpful if the list was ordered based on when they were reported. 
+To fix this, I added 'ORDER BY reportedHunt.dateReported DESC' to the SQL. 
+Before: 
+![The homepage with all the hunts in the database displayed before](screenshots/homepage.png)
+
+After: 
+![The homepage with all the hunts in the database displayed after being ordered by date](screenshots/homepage_ordered.png)
+
+## Testing users can create accounts
+
+I am testing that users can create accounts, and a new row gets inserted into the database. 
+
+(Part of) Users table before: 
+![Part of the users table before](screenshots/users_table.png)
+
+(Part of) Users table after: 
+![Part of the users table after](screenshots/users_table_after.png)
+
+The two users that I added through the website have now been added to the database. 
+Signing up to the website: (TODO convert to GIF later. )
+![Signing up to the website](screenshots/signing_up.mov)
+
+### Changes / Improvements
+As the system worked correctly, there was no need for any changes. 
+
+
+## Testing all information gets displayed about a specific hunt. 
+
+I am testing that on the specific hunt page, the correct information about the hunt is displayed. This includes the usernames of who reported the hunt, who the hunt leader is (if there is one), photos that have been sent in, the description given about the hunt, and when it was reported. 
+
+Hunt information: 
+
+![Hunt information 1](screenshots/hunt_information_1.png)
+![Hunt information 2](screenshots/hunt_information_2.png)
+
+And the photo that was submitted: 
+
+![Photo submitted](screenshots/image_for_hunt.png)
+
+Hunt Page: 
+
+![Top of hunt page](screenshots/top_of_hunt.png)
+![Bottom of hunt page](screenshots/bottom_of_hunt.png)
+
+The hunt information displays correctly onto the page, including the username of the person who reported the hunt and the image, proving I did my joins correctly. 
+
+### Changes / Improvements
+
+I decided it would be better if instead of saying 'hunt leader is None' it instead said 'There is no hunt leader yet'. 
+
+Before: 
+![Bottom of hunt page](screenshots/bottom_of_hunt.png)
+
+After:
+![Bottom of hunt page, with new dialog.](screenshots/there_is_no_hunt_leader.png)
+
+
+## Testing hunt leader can be added from hunt page. 
+
+I am testing that the first person who signs up to the hunt becomes the hunt leader. 
+
+Before signing up: 
+![No hunt leader](screenshots/no_hunt_leader.png)
+
+Signing up: 
+
+![signing up for the hunt](screenshots/signing_up_for_hunt.gif)
+
+I signed up using my account 'Pikmin Pikmin' with the ID 11
+
+![Signed up for the hunt](screenshots/signed_up.png)
+
+The Pikmin account becomes the hunt leader.
+
+I then joined the hunt from a second account, to verify the hunt leader would not change with a new account attatched.  
+
+Hunt leader before signing up:
+![before_signing_up](screenshots/before_signing_up.png)
+
+Signing up from account 2
+![Signing up from account 2](screenshots/leader_signing_up_from_account_2.gif)
+
+Hunt leader after signing up: 
+![after signing up (It's the same photo. It's a lot of effort to get a second photo that shows the *exact* same thing.)](screenshots/before_signing_up.png)
+
+The hunt leader did not change with a second account. 
+
+### Changes / Improvements
+
+As this worked as required, no changes were necesary. 
+
+
+## Testing that date of hunt can be updated. 
+
+I am testing that the date of the hunt can be updated on the hunt page. 
+
+Before setting the date in the hunt we reported earlier:
+![Photo of the database before setting the date. It reads null under date_of_hunt ](screenshots/date_before_setting.png)
+
+Setting the date in my Pikmin Pikmin account:
+![Setting the date of the hunt](screenshots/date_setting.gif)
+
+Database after: 
+![Date reads in database](screenshots/date_after_setting.png)
+
+
+### Changes / Improvements
+
+As this feature works as intended, there is no need for changes.
+
+
+
+## Testing that account details can be updated.
+
+I am testing that account details (bio/profile picture) can be updated.  
+
+Database before editing the profile picture:
+![Database before](screenshots/profile_before.png)
+
+Editing the profile
+![A gif of editing the profile picture](screenshots/profile_updating.gif)
+
+Database after:
+![database after](screenshots/profile_after.png)
+
+### Changes / Improvements
+
+As this feature works as intended, no changes were neeeded. 
+
+## Testing accounts can be deleted. 
+
+I am testing that accounts can be deleted. 
+
+Database before I deleted it
+![Database before I deleted it](screenshots/delete_before.png)
+
+Deleting the 'pikmin pikmin' account
+![Deleting the pikmin pikmin account](screenshots/delete_deleting.gif)
+
+Database After
+![Database with a distinct lack of a Pikmin Pikmin account](screenshots/delete_after.png)
+### Changes / Improvements
+
+AS this feature works as intended, no changes were needed. 
+
+## Testing hunts can be created. 
+
+I am testing that hunts can be created. 
+
+Adding hunt:
+![Adding hunt](screenshots/hunt_adding.gif)
+
+(part of) Database after:
+![Database with the new hunt added](screenshots/hunt_database.png)
+
+### Changes / Improvements
+
+I noticed that the status defaulted to 'open' without a capital.
+Status before: 
+![Status before](screenshots/status_before.png)
+
+Status after I changed it:
+
+
+Replace this text with notes any improvements you made as a result of the testing.
+
+**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
+
+
+## Testing all information gets displayed about a specific hunt. 
+
+I am testing that on the specific hunt page, the correct information about the hunt is displayed. 
 
 **PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
 
-![Placeholder](screenshots/placeholder.png)
+### Changes / Improvements
+
+Replace this text with notes any improvements you made as a result of the testing.
+
+**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
+## Testing all information gets displayed about a specific hunt. 
+
+I am testing that on the specific hunt page, the correct information about the hunt is displayed. 
+
+**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
 
 ### Changes / Improvements
 
@@ -35,10 +246,21 @@ Replace this text with notes any improvements you made as a result of the testin
 
 **PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
 
+## Testing all information gets displayed about a specific hunt. 
 
-## Testing FEATURE NAME HERE
+I am testing that on the specific hunt page, the correct information about the hunt is displayed. 
 
-Replace this text with notes about what you are testing, how you tested it, and the outcome of the testing
+**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
+
+### Changes / Improvements
+
+Replace this text with notes any improvements you made as a result of the testing.
+
+**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
+v
+## Testing all information gets displayed about a specific hunt. 
+
+I am testing that on the specific hunt page, the correct information about the hunt is displayed. 
 
 **PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
 
@@ -48,10 +270,13 @@ Replace this text with notes any improvements you made as a result of the testin
 
 **PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
 
+v
+v
 
-## Testing FEATURE NAME HERE
 
-Replace this text with notes about what you are testing, how you tested it, and the outcome of the testing
+## Testing all information gets displayed about a specific hunt. 
+
+I am testing that on the specific hunt page, the correct information about the hunt is displayed. 
 
 **PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
 
@@ -60,7 +285,6 @@ Replace this text with notes about what you are testing, how you tested it, and 
 Replace this text with notes any improvements you made as a result of the testing.
 
 **PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
-
 
 ## ETC...
 

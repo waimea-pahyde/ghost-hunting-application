@@ -12,7 +12,12 @@
     <h1>Hunt at {{hunt.location}}</h1>
     <h2>Hunt information:</h2>
     <p>{{hunt.details}} </p>
-    
+    {%if photos %}
+      <h2>Submitted photos: </h2>
+      {%for photo in photos %}
+      <iMg src="/static/uploads/{{ photo.image }}">
+      {%endfor%}
+    {%endif%}
     <p><strong>Current status: </strong>{{hunt.status}}</p>
     
       {% if hunt.reportedBy == none %} 
@@ -26,7 +31,12 @@
     <br>
     
     <p>Hunt reported on: {{ hunt.dateReported }}     </p>
+    
+    {% if hunt.leader_username == None%}
+    <p>There is no hunt leader. Be the first to 'Join Hunt' and be the leader of this hunt! </p>
+    {%else%}  
     <p>Hunt leader is {{  hunt.leader_username }}</p>
+    {%endif %}
     
     {% if session.logged_in %}
      <form method="post" action="/join_hunt/{{hunt.hunt_id}}">
@@ -158,7 +168,7 @@ marker = L.marker([{{lat}}, {{lon}}]).addTo(map);
 
 
   <p>Please submit a report on the hunt! </p>
-    <form method="post" action="/send_report/{{hunt.hunt_id}}">
+    <form method="post" action="/send_report/{{hunt.hunt_id}}" enctype="multipart/form-data">
             <label>
       Description of events:
       <input type="text" name="description" required>
@@ -167,6 +177,18 @@ marker = L.marker([{{lat}}, {{lon}}]).addTo(map);
       reccomended next action:
       <input type="test" name="next_action" required>
       </label>
+      <label>
+        Submit Photos:
+        <input
+            name="images"
+            type="file"
+            accept="image/png, image/jpeg, image/gif, image/webp"
+            multiple
+        >
+    </label>
+
+
+
       <button >Submit</button>
     </form>
     {% else%}
@@ -177,13 +199,35 @@ marker = L.marker([{{lat}}, {{lon}}]).addTo(map);
     <h3>This hunt is over. Hunt report can be seen below.</h3>
     <p><strong>Hunt recap:</strong>{{hunt.description}}</p>
     <p><strong>Reccomended next action:</strong>{{hunt.recommended_next_action}}</p>
+    {%if photos %}
+      <h2>Photos from the hunt: </h2>
+      {%for photo in photos %}
+      {% if not photo.before_hunt %}
+          <iMg src="/static/uploads/{{ photo.image }}">
+      
+    {%endif%}
+{%endfor%}
+
+    <h3>Original hunt details:</h3>
+    <p><strong>Hunt Description</strong>{{hunt.details}}</p>
+    <p><strong>Original hunt photos: </strong></p>
+    {%if photos %}
+      <h2>Submitted photos: </h2>
+      {%for photo in photos %}
+      {% if photo.before_hunt %}
+          <iMg src="/static/uploads/{{ photo.image }}">
+    {%endif%}
+ {%endfor%}
+ {%endif%}
 
 
 
-  {%else %}
-  <p>If you're seeing this, you're somewhere you aren't supposed to be, I've fucked something up, or some god foresaken hole in between. Let's agree to never speak of this again, okay? </p>
+    {%else %}
+  <p>If you're seeing this, you're somewhere you aren't supposed to be, I've fucked something up, or some god foresaken hole in between. 
+  Let's agree to never speak of this again, okay? </p>
 
-  {% endif %}
+    {% endif %}
+{% endif %}
 
 {% endblock %}
  

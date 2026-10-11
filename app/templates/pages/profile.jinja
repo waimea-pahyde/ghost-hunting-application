@@ -7,6 +7,7 @@
 
 {% block content %}
 <h1>{{user.forename}} {{user.surname}}</h1>
+<iMg src="/static/uploads/{{ user.profile_picture }}">
 <p>{{user.bio}}</p>
 <h2>Previous HUnts:</h2>
 {%for hunt in previous_hunts%}

@@ -5,14 +5,18 @@
 
 from flask import Flask, request, session, render_template, flash, redirect, send_file, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from urllib.parse import urlencode, quote
 from os import getenv
 from io import BytesIO
 import html
 import requests
+import os
 from app.helpers import *
+import uuid
 from datetime import date
+
 
 
 # Create the app
@@ -20,9 +24,9 @@ app = Flask(__name__)
 
 
 
-# TODO get photos working, then that's it I'm pretty sure?? 
-#  never,ind get ghost hunters working too. 
-
+# TODO 
+# Cannot set a date in the past
+# Delete my account
 
 
 
@@ -34,6 +38,39 @@ app = Flask(__name__)
 #  - stop at nice park benches to delay arrival at bridges to cross
 
 
+
+# Images code
+
+UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
+   
+   
+
+
+
+#===========================================================
+# App Routes Handlers
+#===========================================================
+
+#-----------------------------------------------------------
+# Welcome page
+#-----------------------------------------------------------
+
+
+#-----------------------------------------------------------
+# Creature list page - Show all the creatures
+#-----------------------------------------------------------
+
+
+#-----------------------------------------------------------
+# Help page - Show some help
+#-----------------------------------------------------------
+
+
+
+
+
+
+ 
 
 
 
@@ -51,7 +88,7 @@ app = Flask(__name__)
 # if the reported hunt date is today slash whenever
 # change the status. 
 
-
+# 
 
 @app.get("/")
 def show_home():
@@ -59,7 +96,7 @@ def show_home():
     with connect_db() as db:
             sql = """
             SELECT * FROM reportedHunt
-              ORDER BY reportedHunt.dateReported DESC
+            ORDER BY reportedHunt.dateReported DESC 
 
             """
               # LEFT JOIN user ON reportedHunt.reportedBy = user.id
@@ -136,7 +173,6 @@ def add_user():
     surname  = request.form.get('surname',  '').strip()
     username = request.form.get('username', '').strip().lower()
     password = request.form.get('password', '').strip()
-    ghostHunter = request.form.get('ghostHunter')
 
 
     with connect_db() as db:
@@ -151,10 +187,10 @@ def add_user():
         pass_hash = generate_password_hash(password)
 
         sql = """
-            INSERT INTO user (forename, surname, username, passwordHash, ghostHunter)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO user (forename, surname, username, passwordHash)
+            VALUES (?, ?, ?, ?)
         """
-        params = (forename, surname, username, pass_hash, ghostHunter)
+        params = (forename, surname, username, pass_hash)
         db.execute(sql, params)
 
         flash("Account created. Please login", "success")
@@ -225,19 +261,35 @@ def set_date(id):
 # Send the hunt report
 @app.post("/send_report/<int:id>")
 def send_report(id):
-    description = request.form.get('description', '').strip()
-    next_action = request.form.get('next_action', '').strip()
-    with connect_db() as db:
-    
-        sql = """
-        UPDATE reportedHunt 
-        SET description = ?, recommended_next_action = ?, status="Report Submitted" 
-        WHERE id = ?;
-        """
-        params = (description, next_action, id)
-        db.execute(sql, params)
+    description = request.form.get("description", "").strip()
+    next_action = request.form.get("next_action", "").strip()
+    images = request.files.getlist("images")
 
-        flash("Report Sent!", "success")
+    with connect_db() as db:
+        db.execute(
+            """
+            UPDATE reportedHunt
+            SET description = ?, recommended_next_action = ?, status = 'Report Submitted'
+            WHERE id = ?
+            """,
+            (description, next_action, id),
+        )
+
+        for img in images:
+            # An empty file input submits one blank part; skip it
+            if not img or img.filename == "":
+                continue
+
+            filename = secure_filename(img.filename)
+            unique_filename = f"{uuid.uuid4().hex[:12]}_{filename}"
+            img.save(os.path.join(UPLOAD_FOLDER, unique_filename))
+
+            db.execute(
+                "INSERT INTO image (hunt, image, before_hunt) VALUES (?, ?, ?)",
+                (id, unique_filename, 0),
+            )
+
+    flash("Report Sent!", "success")
     return redirect("/")
 
 @app.post("/hunt/<int:id>/end")
@@ -279,12 +331,20 @@ def view_hunt(id):
             reporter.username AS reporter_username
             FROM reportedHunt
             LEFT JOIN user AS reporter ON reportedHunt.reportedBy = reporter.id
-            LEFT JOIN user AS leader ON reportedHunt.huntLeader = leader.id 
+            LEFT JOIN user AS leader ON reportedHunt.huntLeader = leader.id
             WHERE reportedHunt.id=?
           
         """
         params = (id,)
         hunt = db.execute(sql, params).fetchone()
+
+        sql = """
+            SELECT  * FROM image
+            WHERE hunt=?
+        """
+        params = (id,)
+        photos = db.execute(sql, params).fetchall()
+
 
         user_id = session["user"]["id"]
         sql = "SELECT DATE(date_of_hunt) AS date_of_hunt FROM reportedHunt WHERE id=?"
@@ -360,6 +420,9 @@ def view_hunt(id):
             """
         params = [id]
         message = db.execute(sql, params).fetchall()
+        
+
+        
 
         return render_template("pages/hunt.jinja", 
                             hunt=hunt, 
@@ -371,7 +434,8 @@ def view_hunt(id):
                             lat=lat,
                             lon=lon,
                             messages=message,
-                            signed_up=signed_up)
+                            signed_up=signed_up,
+                            photos=photos)
     
 
 
@@ -397,32 +461,6 @@ def view_hunt(id):
 # If 'people in hunt' = 0 then you're the leader
 # yay
 
-@app.get("/hunting_afterhunt/<int:id>")
-@login_required
-def after_hunt(id):
-        with connect_db() as db:
-            sql = """
-                SELECT  * FROM participant AS people
-                LEFT JOIN user AS hunters ON people.ghostHunterID = hunters.id 
-                WHERE people.huntID=?
-            """
-            params = [id]
-            participant = db.execute(sql, params).fetchall()
-
-            sql = """
-                SELECT  * FROM reportedHunt AS hunt
-                WHERE hunt.id=?
-            """
-            params = [id]
-            hunt = db.execute(sql, params).fetchone()
-
-            current_user = session["user"]["id"]
-
-
-        return render_template("pages/huntingafterhunt.jinja", hunt=hunt, participant=participant, id=id, current_user = current_user)
-
-
-
 # SEnd report
 # If the user is not logged in, set name as null
 # If the user is logged in, set the person who reported it's hunt to their ID
@@ -437,28 +475,34 @@ def logout_admin():
 
 @app.post("/sendReport")
 def add_hunt():
-    location  = request.form.get('address address-search address-search',  '').strip()
-    description = request.form.get('description', '').strip()
-    if session.get("user") and session.get("logged_in"):
-        
-        with connect_db() as db:
-            sql = """
-            INSERT INTO reportedHunt (reportedBy, location, details)
-            VALUES (?,?, ?)
-        """
-            params = (session["user"]["id"], location, description)
-            db.execute(sql, params)
-    
-    else:
-        with connect_db() as db:
-            
-            sql = """
-            INSERT INTO reportedHunt (location, details)
-            VALUES (?,?)
-            """
-            params = (location, description)
-            db.execute(sql, params)
+    location = request.form.get("address address-search address-search", "").strip()
+    description = request.form.get("description", "").strip()
+    images = request.files.getlist("images")
 
+    user_id = None
+    if session.get("user") and session.get("logged_in"):
+        user_id = session["user"]["id"]
+
+    with connect_db() as db:
+        cursor = db.execute(
+            "INSERT INTO reportedHunt (reportedBy, location, details) VALUES (?, ?, ?)",
+            (user_id, location, description),
+        )
+        hunt_id = cursor.lastrowid
+
+        for img in images:
+
+            if not img or img.filename == "":
+                continue
+
+            filename = secure_filename(img.filename)
+            unique_filename = f"{uuid.uuid4().hex[:12]}_{filename}"
+            img.save(os.path.join(UPLOAD_FOLDER, unique_filename))
+
+            db.execute(
+                "INSERT INTO image (hunt, image, before_hunt) VALUES (?, ?, ?)",
+                (hunt_id, unique_filename, 1),
+            )
 
     flash("report sent!", "success")
     return redirect("/")
@@ -522,16 +566,51 @@ def edit_profile(id):
 def submit_profile_edit():
      id = session["user"]["id"]
      bio  = request.form.get('bio',  '').strip()
+     profile_image = request.files.get('image_file', None)
+     
+     if not profile_image or profile_image.filename == '':
+        flash("There was a problem uploading the image", "error")
+        return redirect("/")
+    
+    # Sanitise filename and make it unique
+     filename = secure_filename(profile_image.filename)
+     random_prefix = uuid.uuid4().hex[:12]
+     unique_filename = f"{random_prefix}_{filename}"
+
+    # Get the path of the upload folder
+     filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
+
+    # Save file to disk
+     profile_image.save(filepath)
+
+    # Add the form data and the upload filename to the DB
      with connect_db() as db:
            sql = """
             UPDATE user 
-            SET (bio)=?
+            SET bio=?, profile_picture=?
             WHERE id=?
             """
-           params = (bio, id)
+           params = (bio, unique_filename, id)
            db.execute(sql, params)
            flash("Profile updated", "success")
            return redirect(f"/profile/{id}")
+     
+
+@app.get("/delete_profile")
+@login_required
+def delete_profile():
+     with connect_db() as db:
+           sql = """
+            DELETE FROM user
+            WHERE id=?
+            """
+           params = (session["user"]["id"],)
+           db.execute(sql, params)
+           
+           session.clear()
+     flash("Account deleted", "success")
+     return redirect("/")
+
      
 
 #=======================👻====================================

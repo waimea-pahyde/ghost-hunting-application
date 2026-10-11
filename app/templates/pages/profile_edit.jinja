@@ -6,12 +6,26 @@
 
 
 {% block content %}
-<form method="post" action="/edit_profile">
+<form method="post" action="/edit_profile" enctype="multipart/form-data">
 <label>
 Change bio
 <input type="text" name="bio">
 </label>
-<button h>Submit</button>
+    <label>
+        image
+        <input
+            name="image_file"
+            type="file"
+            accept="image/png, image/jpeg, image/gif, image/webp"
+        >
+    </label>
+<button>Submit</button>
 </form>
+
+
+  <a href="/delete_profile" onclick="return window.confirm('Are you sure you want to delete your account?');">
+    Delete Account
+  </a>
+
 {% endblock %}
 

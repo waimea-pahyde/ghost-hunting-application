@@ -27,8 +27,8 @@ class userTable:
             username        TEXT NOT NULL, 
             reportedHunts   INT DEFAULT 0,
             bio    TEXT,
+            profile_picture TEXT DEFAULT "default.png",
             passwordHash         TEXT NOT NULL,
-            ghostHunter             BOOLEAN, 
             created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """
@@ -36,10 +36,10 @@ class userTable:
     SEED_DATA = """
         INSERT INTO user (forename, surname, username, reportedHunts, bio, passwordHash, ghostHunter)
         VALUES
-            ("Sharon", "Paratrack", "sharontracksghosts", 4, "Hey! I'm Sharon Paratrack. A fun fact about me: I can smell ghosts!", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252", false),
-            ("Hugh", "Findghost", "hughfindsghosts", 2, "Hey! I'm Hugh Findghost. A fun fact about me: I know the best ghost locations!", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252", false),
-            ("Ryan", " Banishspirit", "ryanbanishesspirits", 0, "I'm not entirely sure what I'm doing here but I keep finding ghosts in new world.", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252", false),
-            ("John", "Ghosthunter", "JohnGhosthunter", 1, "Hey! I'm John Ghostunter. After my creepy uncles disapearence, I've been fascinated in hunting ghosts.", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252", false)
+            ("Sharon", "Paratrack", "sharontracksghosts", 4, "Hey! I'm Sharon Paratrack. A fun fact about me: I can smell ghosts!", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252"),
+            ("Hugh", "Findghost", "hughfindsghosts", 2, "Hey! I'm Hugh Findghost. A fun fact about me: I know the best ghost locations!", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252"),
+            ("Ryan", " Banishspirit", "ryanbanishesspirits", 0, "I'm not entirely sure what I'm doing here but I keep finding ghosts in new world.", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252"),
+            ("John", "Ghosthunter", "JohnGhosthunter", 1, "Hey! I'm John Ghostunter. After my creepy uncles disapearence, I've been fascinated in hunting ghosts.", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252")
             
     """
 
@@ -117,6 +117,26 @@ class participantTable:
     """
 
 
+class imageTable:
+
+    NAME = "image"
+
+    SCHEMA = """
+        CREATE TABLE image (
+            id      INTEGER PRIMARY KEY AUTOINCREMENT,
+            hunt        INTEGER NOT NULL REFERENCES reportedHunt(id),
+            image      TEXT NOT NULL,
+            before_hunt BOOLEAN DEFAULT 0
+        )
+    """
+
+    SEED_DATA = """
+        INSERT INTO image (hunt, image)
+        VALUES
+           (1, "ghost_sighting.png")
+      
+    """
+
 
 #----------------------------------------------------------------------------
 # Table registry
@@ -137,7 +157,9 @@ TABLES = [
     userTable,
     participantTable,
     messagesTable,
-    reportedHuntTable
+    reportedHuntTable,
+    imageTable
+
     # Add more tables here...
 ]
 
