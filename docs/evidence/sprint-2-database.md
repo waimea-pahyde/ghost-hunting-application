@@ -30,8 +30,8 @@ Implement the database, populated with test data. Create queries that retrieve t
 
     - Insert accounts into the database (DONE)
 
-    - update information on accounts 
-    - delete accounts
+    - update information on accounts (DONE)
+    - delete accounts (DONE)
     - Add a hunt into the database
     - Add messages into the database
     - Retrieve all messages from the database
