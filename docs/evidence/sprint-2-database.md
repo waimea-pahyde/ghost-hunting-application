@@ -297,9 +297,10 @@ v
 v
 
 
-## Testing all information gets displayed about a specific hunt. 
+## Testing that hunt final report gets sent. 
 
-I am testing that on the specific hunt page, the correct information about the hunt is displayed. 
+I am testing that the final report gets sent. 
+
 
 **PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
 
