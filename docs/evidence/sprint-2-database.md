@@ -26,6 +26,7 @@ Implement the database, populated with test data. Create queries that retrieve t
     - Update the data on a specific hunt by: 
         - updating the hunt leader (DONE)
         - Updating the date of the hunt (DONE)
+        - Updating the status of the hunt
 
     - Insert accounts into the database (DONE)
 
@@ -35,10 +36,7 @@ Implement the database, populated with test data. Create queries that retrieve t
     - Add messages into the database
     - Retrieve all messages from the database
     - Retrieve all participant data, and join it to data on the reported hunt table. 
-    - Insert into the participants table. 
-    - Insert into the Images table. 
-    - Join Users onto reported hunt
-    - sign users up for hunts
+     - sign users up for hunts
     
 
 
@@ -216,53 +214,78 @@ Status before:
 ![Status before](screenshots/status_before.png)
 
 Status after I changed it:
+![status reading 'Open' with a capital](screenshots/Status_after.png)
 
+## Testing the status of the hunt updates
 
-Replace this text with notes any improvements you made as a result of the testing.
+I am testing that the status of the hunt updates when it is the hunt date. 
 
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
-
-
-## Testing all information gets displayed about a specific hunt. 
-
-I am testing that on the specific hunt page, the correct information about the hunt is displayed. 
-
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
+Here is a hunt set for the 12th of October at 11:55
+![Hunt set for date above](screenshots/status_update_before.png)
 
 ### Changes / Improvements
 
-Replace this text with notes any improvements you made as a result of the testing.
+While this worked sometimes, this specific time it didn't. 
+Through further testing, I discovered that because of the Docker container the system runs through, date.today() was returning the date in UTC, but the reportedHunt date was for NZsT. 
 
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
-## Testing all information gets displayed about a specific hunt. 
+To fix this, I converted the dates to UTC to store in the database, and made them display in local time for people elsewhere. 
 
-I am testing that on the specific hunt page, the correct information about the hunt is displayed. 
+Date code before changes: 
+![date code before](screenshots/date_code_before.png)
 
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
+Date code after. 
+![Date code after. Notably, now using a nifty try & except function, which I learnt for this function alone.](screenshots/date_code_after.png)
+
+I then also updated the form to add inline javascript, taking the date and converting to UTC. 
+![Form script](screenshots/date_code_form.png)
+
+Finally, I changed the comparison to work in UTC.
+![Date change](screenshots/date_code_utc.png)
+
+Finally, I tested this, to see that it worked. 
+
+![date code final](screenshots/date_code_final.gif)
+In the final frame, the status has changed to hunting and the website changed. 
+
+I then also moved the countdown to this page, as I preferred it over here. 
+
+## Testing messages get added to the messages table for a specific hunt. 
+
+I am testing that the correct messages show up for the hunt, and that they are attributed to the correct people. 
+
+The hunt I am sending messages to has an ID of 19, and currently there are no messages with the huntID 19. 
+![Messages for other hunts, but no messages for this hunt](screenshots/messages_before.png)
+
+I added three messages to the hunt. All three were successfully by Pikmin Pikmin, meaning I have done my joins correctly. 
+
+![All three messages displaying on the webpage.](screenshots/messages_added.png)
+
+Then in the database: 
+
+![Messages in the database](screenshots/messages_after.png)
+
+### Changes / Improvements
+No changes needed to be made here.
+
+## Testing all messages get retrieved from the database
+
+I am testing that all messages can be retrieved from the database on a specific hunt. 
+
+This hunt is huntID 20, and in the database there's three messages recorded.
+
+![messages in the database](screenshots/messages_display_before.png)
+
+Then on the webpage: 
+
+![messageson the page](screenshots/messages_display_after.png)
 
 ### Changes / Improvements
 
-Replace this text with notes any improvements you made as a result of the testing.
+As this feature worked as intended, there was no need for changes/improvements. 
 
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
+## Testing a list of participants gets displayed on the hunt page.
 
-## Testing all information gets displayed about a specific hunt. 
-
-I am testing that on the specific hunt page, the correct information about the hunt is displayed. 
-
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
-
-### Changes / Improvements
-
-Replace this text with notes any improvements you made as a result of the testing.
-
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
-v
-## Testing all information gets displayed about a specific hunt. 
-
-I am testing that on the specific hunt page, the correct information about the hunt is displayed. 
-
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
+I am testing that the list of participants in the hunt gets displayed on the hunt page, with their first name and their last name. This means I have correctly joined the Participants table to both the users & the reportedHunt table. 
 
 ### Changes / Improvements
 

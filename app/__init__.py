@@ -3,7 +3,7 @@
 # By YOUR NAME HERE 👻
 #========👻===================================================
 
-from flask import Flask, request, session, render_template, flash, redirect, send_file, make_response
+from flask import Flask, request, session, render_template, flash, redirect, send_file, make_response, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -15,7 +15,7 @@ import requests
 import os
 from app.helpers import *
 import uuid
-from datetime import date
+from datetime import *
 
 
 
@@ -244,19 +244,22 @@ def join_hunt(id):
 #update the date of hunt in the database.
 @app.post("/set_date/<int:id>")
 def set_date(id):
-    date = request.form.get('date_of_hunt', '').strip()
-    with connect_db() as db:
-    
-        sql = """
-        UPDATE reportedHunt 
-        SET date_of_hunt = ?
-        WHERE id = ?;
-        """
-        params = (date, id)
-        db.execute(sql, params)
+    raw = request.form.get("date_of_hunt", "").strip()
+    try:
+        dt = datetime.fromisoformat(raw.replace("Z", "+00:00")).astimezone(timezone.utc)
+    except ValueError:
+        flash("Invalid date.", "error")
+        return redirect("/")
 
-        flash("Date set!", "success")
+    with connect_db() as db:
+        db.execute(
+            "UPDATE reportedHunt SET date_of_hunt = ? WHERE id = ?",
+            (dt.isoformat(), id),
+        )
+    flash("Date set!", "success")
     return redirect("/")
+
+
 
 # Send the hunt report
 @app.post("/send_report/<int:id>")
@@ -305,12 +308,8 @@ def end_hunt(id):
 
         flash("Hunt ended", "success")
     return redirect(f"/view_hunt/{id}")
+
 #view specific hunt
-
-# TODO - When calling the view hunt URL, run an if that pretty much says if day of hunt = today, then do the thing. 
-# in the sql. Get todays datee.. Get the date of hunt. If the date today and the day of the hunt are the same, run a set. 
-
-
 @app.get("/view_hunt/<int:id>")
 @login_required
 def view_hunt(id):
@@ -353,21 +352,19 @@ def view_hunt(id):
         hunt_date = row['date_of_hunt']
         todays_date = date.today()
 
-        sql = "SELECT status FROM reportedHunt WHERE id=?"
-        params = (id,)
-        row = db.execute(sql, params).fetchone()
-        status = row['status']
-        print(status)
+        row = db.execute("SELECT date_of_hunt, status FROM reportedHunt WHERE id = ?", (id,)).fetchone()
 
-        if (str(hunt_date) == str(todays_date) and str(status) == "open"):
-                
-            sql = """
+        if row["date_of_hunt"] and row["status"] == "open":
+            hunt_dt = datetime.fromisoformat(row["date_of_hunt"])
+            if datetime.now(timezone.utc) >= hunt_dt:
+                print("THIS IS TRUE")     
+                sql = """
             UPDATE reportedHunt 
             SET status= "hunting" 
             WHERE id = ?;
                     """
-            params = (id,)
-            db.execute(sql, params)
+                params = (id,)
+                db.execute(sql, params)
 
         # Hunting
         sql = """
@@ -393,7 +390,7 @@ def view_hunt(id):
         hunt_time = row['time_of_hunt']
 
         print("----------------------------------------------")
-        address = hunt['location'] + " ,New Zealand"
+        address = hunt['location']
         print(address)
         address = quote(address)
         print(address)
@@ -405,10 +402,15 @@ def view_hunt(id):
         data = response.json()
         print(data)
         print(len(data))
+        
+        try:
+            place = data[0]
+            lat = place["lat"]
+            lon = place["lon"]
+        except: 
+            flash("No location found for this address! If this is your hunt, try a different address!", "error")
+            return redirect("/")
 
-        place = data[0]
-        lat = place["lat"]
-        lon = place["lon"]
 
         # Hunting in hunt: 
         #  if their username is in the list of participating users then set it to true. else set it to false
@@ -437,7 +439,18 @@ def view_hunt(id):
                             signed_up=signed_up,
                             photos=photos)
     
-
+@app.get("/messages/<int:hunt_id>/")
+def get_messages(hunt_id):
+    after = request.args.get("after", 0, type=int)
+    with connect_db() as db:
+        rows = db.execute("""
+            SELECT message.id, message.body, user.forename, user.surname
+            FROM message
+            JOIN user ON user.id = message.sender
+            WHERE message.hunt = ? AND message.id > ?
+            ORDER BY message.id
+        """, (hunt_id, after)).fetchall()
+    return jsonify([dict(r) for r in rows])
 
 # Hunt page. Go to see hunt. 
 # Before the hunt starts:
@@ -475,10 +488,14 @@ def logout_admin():
 
 @app.post("/sendReport")
 def add_hunt():
-    location = request.form.get("address address-search address-search", "").strip()
     description = request.form.get("description", "").strip()
     images = request.files.getlist("images")
+    street = request.form.get("street", "").strip()
+    town = request.form.get("town", "").strip()
+    country = request.form.get("country", "").strip()
 
+    location = " ".join(part for part in (street, town, country) if part) 
+    
     user_id = None
     if session.get("user") and session.get("logged_in"):
         user_id = session["user"]["id"]
@@ -508,22 +525,19 @@ def add_hunt():
     return redirect("/")
 
 
-
 @app.post("/message/<int:id>/")
 def add_message(id):
-    user = session["user"]
-    user_id = user["id"]
-    body = request.form.get('body', '').strip()
+    user_id = session["user"]["id"]
+    body = request.form.get("body", "").strip()
+    if not body:
+        return jsonify(error="Empty message"), 400
 
     with connect_db() as db:
-        sql = """
-            INSERT INTO message (sender, hunt, body)
-            VALUES (?, ?, ?)
-        """
-        params = (user_id, id, body)
-        db.execute(sql, params)
-    
-    return redirect(f"/view_hunt/{id}")
+        db.execute(
+            "INSERT INTO message (sender, hunt, body) VALUES (?, ?, ?)",
+            (user_id, id, body),
+        )
+    return jsonify(ok=True)
 
 @app.get("/profile/<int:id>")
 def see_profile(id):

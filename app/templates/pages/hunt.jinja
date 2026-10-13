@@ -12,6 +12,7 @@
     <h1>Hunt at {{hunt.location}}</h1>
     <h2>Hunt information:</h2>
     <p>{{hunt.details}} </p>
+    
     {%if photos %}
       <h2>Submitted photos: </h2>
       {%for photo in photos %}
@@ -49,25 +50,29 @@
 
  {#As days go by I find myself more wishful for the when statement.   #}
     
-    {% if user_id == hunt.huntLeader and hunt.date_of_hunt == none %}
-          <form method="post" action="/set_date/{{hunt.hunt_id}}">
-            <label>
-            Pick a date for the hunt!
-     <input type="datetime-local" id="date_of_hunt" name="date_of_hunt">
-      </label>
-      <button >Submit date.</button>
-    </form>
+{% if user_id == hunt.huntLeader and hunt.date_of_hunt is none %}
+  <form method="post" action="/set_date/{{ hunt.hunt_id }}" id="dateForm">
+    <label>
+      Pick a date for the hunt!
+      <input type="datetime-local" id="local_date" required>
+    </label>
+    <input type="hidden" name="date_of_hunt" id="date_of_hunt">
+    <button>Submit date</button>
+  </form>
+
+  <script>
+    document.getElementById("dateForm").addEventListener("submit", () => {
+      const local = document.getElementById("local_date").value;
+      document.getElementById("date_of_hunt").value = new Date(local).toISOString();
+    });
+  </script>
     {% elif user_id != hunt.huntLeader %}
       <p>Only the leader can pick a day for this hunt! </p>
     {% else %}
-      <p>Hunt day is set for {{hunt.date_of_hunt}}      </p>
-    
-    {%endif%}
-
-
-  {% elif hunt.status == "hunting"%}
-    <h1>Hunt at {{hunt.location}}</h1>
-    <h2 id="hunt_timer"></h2>
+      <p>Hunt starts at
+      <time class="local-time" datetime="{{ hunt.date_of_hunt }}">{{ hunt.date_of_hunt }}</time>
+      </p>
+       <h2 id="hunt_timer"></h2>
     <script> // Made w the help W3schools, I'm running out of time to finish the project, letalone learn js. I do know what's going on though. 
       // Set the date we're counting down to
        var countdown_date = new Date({{ hunt.date_of_hunt | tojson }}).getTime();
@@ -98,6 +103,13 @@
       document.getElementById("hunt_timer").innerHTML = "Hunt is currently active.";}
       } , 1000);
   </script>
+    
+    {%endif%}
+
+
+  {% elif hunt.status == "hunting"%}
+    <h1>Hunt at {{hunt.location}}</h1>
+   
   <h3>Hunt Participants:</h3>
     {% for participant in participants%}
      <a href="/profile/{{participant.id}}"> {{ participant.forename }}
@@ -106,11 +118,11 @@
     
     {%endfor%}
 
-    {% if not signed_up %}
+  {% if not signed_up %}
      <form method="post" action="/join_hunt/{{hunt.hunt_id}}">
     <button>Join Hunt</button>
      </form>
-     {% endif%}
+    {% endif%}
     
     <h3>Hunt Location: </h3>
     <div id="map"></div>
@@ -129,33 +141,52 @@ marker = L.marker([{{lat}}, {{lon}}]).addTo(map);
 {% if signed_up%}
     <h2>Hunt chat: </h2>
     
-    {% for message in messages%}
-    <p>{{ message.forename }}
-    {{ message.surname}}:
-    {{message.body}}</p>
+ <div id="messages">
+  {% for message in messages %}
+    <p data-id="{{ message.id }}">{{ message.forename }} {{ message.surname }}: {{ message.body }}</p>
+  {% endfor %}
+</div>
 
-    <br>
+<section>
+  <h2>Send Message</h2>
+  <form id="messageForm" method="post" action="/message/{{ hunt.hunt_id }}/">
+    <input type="text" name="body" id="body" required autocomplete="off">
+    <button>Send</button>
+  </form>
+</section>
 
+<script>
+  const huntId = {{ hunt.hunt_id }};
+  const box = document.getElementById("messages");
+  const form = document.getElementById("messageForm");
+  const input = document.getElementById("body");
 
-    
-  {%endfor%}
+  function lastId() {
+    const last = box.lastElementChild;
+    return last ? last.dataset.id : 0;
+  }
 
+  async function loadNew() {
+    const res = await fetch(`/messages/${huntId}/?after=${lastId()}`);
+    if (!res.ok) return;
+    for (const m of await res.json()) {
+      const p = document.createElement("p");
+      p.dataset.id = m.id;
+      p.textContent = `${m.forename} ${m.surname}: ${m.body}`; // textContent, not innerHTML
+      box.appendChild(p);
+    }
+  }
 
-  <section>
-    <h2>Send Message</h2>
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();          
+    await fetch(form.action, { method: "POST", body: new FormData(form) });
+    input.value = "";
+    loadNew();                   
+  });
 
-    <form method="post" action="/message/{{hunt.hunt_id}}/">
-    <label>
-      <input type="text
-      " name="body" required>
-      </label>
-      <button >Send</button>
-    </form>
-
-  {%else %}
-  <h3>Please sign up for the hunt to participate in the hunt chat! </h3>
-  {%endif%}
-      </section>
+  setInterval(loadNew, 3000);         
+</script>
+{%endif%}
     {% if user_id == hunt.huntLeader%}
    <form action="/hunt/{{hunt.hunt_id}}/end" method="POST">
     <button type="submit">End Hunt</button>

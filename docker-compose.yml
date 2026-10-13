@@ -5,6 +5,8 @@ services:
       - "4999:4999"
     volumes:
       - .:/app        # live-reloads code changes without rebuilding
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     env_file:
       - .env          # picks up the existing .env file automatically
     tty: true         # Enable colour output
