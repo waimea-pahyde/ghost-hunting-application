@@ -7,49 +7,63 @@ Continue to develop the web application to the point that it provides all key fu
 
 ### Specific Goals
 
-**Edit these goals as needed**
-
 - Create the following web pages:
-    - Form for ...
+    - login page for users to login
+    - 
     - Etc.
 - Develop SQL database queries to:
     - Add a new ...
     - Etc.
 
 
-## Testing FEATURE NAME HERE
+## Testing users can login 
 
-Replace this text with notes about what you are testing, how you tested it, and the outcome of the testing
+I am testing that users can login to the website, and that the UI changes when I login. I am also testing that users cannot view hunt specifics while being logged out. 
 
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
+Login changes include:
+- Signup button disappears when user is logged in
+- Login button gets replaced with logout button
+- Profile button appears. 
 
-![Placeholder](screenshots/placeholder.png)
+Hunts should then be able to be clicked on when logged in. 
+
+Logging in:
+![Logging in](screenshots/login_logging_in.gif)
+
+From the video, hunts become clickable when you login, and the UI changes. 
+
+### Changes / Improvements
+As this worked as intended, there was no need for changes. 
+
+
+## Testing Ghost locations get displayed on a map.
+
+I am testing that the ghost location displays on a map in the hunt page. 
+
+Location of the hunt: 
+![Hunt at 58 Australia Court Newport Australia](screenshots/map_location.png)
+
+Location the map displays: 
+![Map showing a place in Australia](screenshots/map_map.png)
+
+Actual place:
+![Map Showing where it actually is (its the same spot)](screenshots/map_google.png)
+
+The map works as intended. 
 
 ### Changes / Improvements
 
-Replace this text with notes any improvements you made as a result of the testing.
-
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
+As this feature works as intended, there is no need for changes. 
 
 
-## Testing FEATURE NAME HERE
+## Testing messages live update on the website
 
-Replace this text with notes about what you are testing, how you tested it, and the outcome of the testing
+Testing messages live update on the website, without the user having to reload for new messages. 
 
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
-
-### Changes / Improvements
-
-Replace this text with notes any improvements you made as a result of the testing.
-
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
+Pikmin account sending messages to the hunt: 
+![The 'pikmin pikmin' account sending messages](screenshots/messages_sending.gif)
 
 
-## Testing FEATURE NAME HERE
-
-Replace this text with notes about what you are testing, how you tested it, and the outcome of the testing
-
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
 
 ### Changes / Improvements
 

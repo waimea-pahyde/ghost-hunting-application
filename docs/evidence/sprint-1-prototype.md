@@ -25,7 +25,7 @@ Develop a design for the database and a UI prototype that simulates the key func
 
 This is the initial database design. It includes a table for users with an optional flare of ghost hunter, a table for each reported ghost sighting/reported ghost hunt, and a joint table for the ghost hunter id and the hunt ID.
 
-![DB Design](screenshots/database v1 .png)
+![DB Design](screenshots/database%20v1%20.png)
 
 
 ### Required Data Input

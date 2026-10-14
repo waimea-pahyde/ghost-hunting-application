@@ -25,24 +25,26 @@ addressForm.appendChild(autofillElement);
 
 
     <form method="post" action="/sendReport" enctype="multipart/form-data">
+      
       <mapbox-address-autofill access-token="pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ">
       <input type="text" name="street" autocomplete="address-line1" />
       </mapbox-address-autofill>
-
+<br>
       <label>
         Town of ghost:
         <input type="text" name="town" autocomplete="address-level2" />
       </label>
-
+<br>
       <label>
       Country of ghost:
       <input type="text" name="country" autocomplete="country-name" />
       </label>
-
+<br>
       <label>
       description of events
       <input type="text" name="description" required>
       </label>
+      <br>
       <label>
         Submit Photos:
         <input
@@ -52,11 +54,9 @@ addressForm.appendChild(autofillElement);
             multiple
         >
     </label>
-
-
-      <br>
-      <br>
       <button >Submit</button>
+
+
     </form>
 
 

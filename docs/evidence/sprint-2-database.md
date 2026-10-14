@@ -21,17 +21,17 @@ Implement the database, populated with test data. Create queries that retrieve t
     - Edit profile Page: To Change users profile picture, bio, and delete users account.
 
 - Develop SQL database queries to:
-    - Retrieve all hunts from the database (DONE)
-    - Retrive all information about a specific hunt (DONE)
+    - Retrieve all hunts from the database 
+    - Retrive all information about a specific hunt 
     - Update the data on a specific hunt by: 
-        - updating the hunt leader (DONE)
-        - Updating the date of the hunt (DONE)
+        - updating the hunt leader 
+        - Updating the date of the hunt 
         - Updating the status of the hunt
 
-    - Insert accounts into the database (DONE)
+    - Insert accounts into the database 
 
-    - update information on accounts (DONE)
-    - delete accounts (DONE)
+    - update information on accounts 
+    - delete accounts 
     - Add a hunt into the database
     - Add messages into the database
     - Retrieve all messages from the database
@@ -283,37 +283,28 @@ Then on the webpage:
 
 As this feature worked as intended, there was no need for changes/improvements. 
 
-## Testing a list of participants gets displayed on the hunt page.
-
-I am testing that the list of participants in the hunt gets displayed on the hunt page, with their first name and their last name. This means I have correctly joined the Participants table to both the users & the reportedHunt table. 
-
-### Changes / Improvements
-
-Replace this text with notes any improvements you made as a result of the testing.
-
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
-
-v
-v
-
 
 ## Testing that hunt final report gets sent. 
 
 I am testing that the final report gets sent. 
 
+Sending the report: 
+![Sending a report that there was a ghost, and trhe next steps would probably be to kill it.](screenshots/report_sending.gif)
 
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
+The database:
+
+![The information is in the database](screenshots/report_after.png)
 
 ### Changes / Improvements
 
-Replace this text with notes any improvements you made as a result of the testing.
-
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
-
-## ETC...
-
+As this worked as intended, there was no need for further changes. 
 
 ## Sprint Review
 
-Replace this text with a statement about how the sprint has moved the project forward - key success point, any things that didn't go so well, etc.
+This sprint went really well. It did include a few database changes,  which can be seen in the screenshot below.
 
+Original database:
+![Original database](screenshots/database%20v1%20.png)
+
+New database
+![New database](screenshots/database_update.png)

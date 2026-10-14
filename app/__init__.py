@@ -243,6 +243,7 @@ def join_hunt(id):
 
 #update the date of hunt in the database.
 @app.post("/set_date/<int:id>")
+@login_required
 def set_date(id):
     raw = request.form.get("date_of_hunt", "").strip()
     try:
@@ -263,6 +264,7 @@ def set_date(id):
 
 # Send the hunt report
 @app.post("/send_report/<int:id>")
+@login_required
 def send_report(id):
     description = request.form.get("description", "").strip()
     next_action = request.form.get("next_action", "").strip()
@@ -296,6 +298,7 @@ def send_report(id):
     return redirect("/")
 
 @app.post("/hunt/<int:id>/end")
+@login_required
 def end_hunt(id):
     with connect_db() as db:
         sql = """
@@ -440,6 +443,7 @@ def view_hunt(id):
                             photos=photos)
     
 @app.get("/messages/<int:hunt_id>/")
+@login_required
 def get_messages(hunt_id):
     after = request.args.get("after", 0, type=int)
     with connect_db() as db:
@@ -481,20 +485,25 @@ def get_messages(hunt_id):
 # not cry  I know exactly what i'm doing look at me go. 
 
 @app.get("/logout")
+@login_required
 def logout_admin():
     session.clear()
     flash(f"You have been logged out", "success")
     return redirect("/")    
 
 @app.post("/sendReport")
+
 def add_hunt():
     description = request.form.get("description", "").strip()
     images = request.files.getlist("images")
-    street = request.form.get("street", "").strip()
+    street = request.form.get("street address-search address-search", "").strip()
     town = request.form.get("town", "").strip()
     country = request.form.get("country", "").strip()
 
-    location = " ".join(part for part in (street, town, country) if part) 
+    
+    location = " ".join(part for part in (street, town, country) if part)
+    for i in range (50):
+        print(street)
     
     user_id = None
     if session.get("user") and session.get("logged_in"):
@@ -526,6 +535,7 @@ def add_hunt():
 
 
 @app.post("/message/<int:id>/")
+@login_required
 def add_message(id):
     user_id = session["user"]["id"]
     body = request.form.get("body", "").strip()
@@ -540,6 +550,7 @@ def add_message(id):
     return jsonify(ok=True)
 
 @app.get("/profile/<int:id>")
+@login_required
 def see_profile(id):
      
      with connect_db() as db:
@@ -572,6 +583,7 @@ def see_profile(id):
      
 
 @app.get("/profile/<int:id>/edit")
+@login_required
 def edit_profile(id):
     return render_template("pages/profile_edit.jinja")
 
