@@ -106,9 +106,9 @@ Testing autofill by typing in addresses both kiwi and then from overseas:
 As the website works as intended, there is no need for changes here. 
 
 
-## Testing users can send a ghost report at the end of the hunt
+## Testing users can signup to hunts
 
-While this technically counts as a database interaction, I am testing it again here that the front end & back end work as intended. 
+I am testing users can signup to huns, and
 
 Database before the report is sent: 
 ![Database before sending the report](screenshots/report_before.png)
@@ -119,6 +119,7 @@ Sending a report from the website:
 ### Changes / Improvements
 
 No changes were needed as the system works as intended 
+
 
 ## Sprint Review
 
