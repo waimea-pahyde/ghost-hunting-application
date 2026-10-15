@@ -10,9 +10,29 @@
 {# if logged in and *not* a ghost hunter: Show only the hunts you've reported. #}
 {# If not logged in: Show all hunts available.  #}
 
+    <div id="map"></div>
+    <script>
+    var map = L.map('map').setView([0, 0], 2); 
 
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
+    
+    {% for hunt in hunts %}
+    marker = L.marker([{{hunt.lat}}, {{hunt.lon}}]).addTo(map);        
+    marker.bindTooltip("{{hunt.location}}", {
+    permanent: false, 
+    direction: "top"   
+});
+  
+    {%endfor%}
+    
+    
+    
+    </script>
 
-
+{#     marker.bindPopup("{{hunt.location}}"); #}
+ 
 
     <h2>All hunts available: </h2>
     {%for hunt in hunts %}

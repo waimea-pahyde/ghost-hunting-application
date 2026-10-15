@@ -17,78 +17,11 @@ from app.helpers import *
 import uuid
 from datetime import *
 
+UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
 
 
 # Create the app
 app = Flask(__name__)
-
-
-
-# TODO 
-# Cannot set a date in the past
-# Delete my account
-
-
-
-
-# - see hunt ui
-# - send hunt feedback 
-# - fuck thats a databsase thing isn't it
-#  - fit database
-#  - stop at nice park benches to delay arrival at bridges to cross
-
-
-
-# Images code
-
-UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
-   
-   
-
-
-
-#===========================================================
-# App Routes Handlers
-#===========================================================
-
-#-----------------------------------------------------------
-# Welcome page
-#-----------------------------------------------------------
-
-
-#-----------------------------------------------------------
-# Creature list page - Show all the creatures
-#-----------------------------------------------------------
-
-
-#-----------------------------------------------------------
-# Help page - Show some help
-#-----------------------------------------------------------
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-# Get all the dates from the reported hunt table. 
-# for each hunt in hunt
-# if the reported hunt date is today slash whenever
-# change the status. 
-
-# 
 
 @app.get("/")
 def show_home():
@@ -112,12 +45,36 @@ def show_home():
                 WHERE participant.ghostHunterID = ? 
                 """
                 params = [session["user"]["id"]]
-                
-
                 myHunts = db.execute(sql, params).fetchall()
 
-            
-            
+                for hunt in hunts:
+                    if hunt["lat"] == None:
+                        print("Look at me I'm running!")
+                        address = hunt['location']
+                        address = quote(address)
+                        osm_api_url = f"https://nominatim.openstreetmap.org/search?q=${address}&format=json"
+                        print(osm_api_url)
+                        headers = { 'User-Agent': 'GhostHunters/1.0 (polly@ghosts.boo)'}
+                        response = requests.get(osm_api_url, headers=headers)
+                        data = response.json()
+                        try:
+                            place = data[0]
+                            lat = place["lat"]
+                            lon = place["lon"]
+                            db.execute("""
+                        UPDATE reportedHunt
+                        SET lat=?, lon=?               
+                        WHERE id=?
+                    """,
+                       (lat, lon, hunt["id"]))
+                        
+                        except:
+                            continue
+                    else:
+                        continue
+
+                
+                    
             return render_template("pages/home.jinja", hunts=hunts, myHunts=myHunts)
 
 
@@ -133,7 +90,7 @@ def login_user():
 
     with connect_db() as db:
         sql = """
-            SELECT id, forename, surname, passwordHash, ghostHunter
+            SELECT id, forename, surname, passwordHash
             FROM user
             WHERE username=?
         """
@@ -153,8 +110,7 @@ def login_user():
             "id": user["id"],
             "username": username,
             "forename": user["forename"],
-            "surname":  user["surname"],
-            "ghostHunter": user["ghostHunter"]
+            "surname":  user["surname"]
         }
 
         flash("Login successful", "success")
@@ -496,7 +452,7 @@ def logout_admin():
 def add_hunt():
     description = request.form.get("description", "").strip()
     images = request.files.getlist("images")
-    street = request.form.get("street address-search address-search", "").strip()
+    street = request.form.get("street address-search", "").strip()
     town = request.form.get("town", "").strip()
     country = request.form.get("country", "").strip()
 

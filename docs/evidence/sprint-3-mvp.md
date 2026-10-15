@@ -63,17 +63,62 @@ Testing messages live update on the website, without the user having to reload f
 Pikmin account sending messages to the hunt: 
 ![The 'pikmin pikmin' account sending messages](screenshots/messages_sending.gif)
 
+### Changes / Improvements
+
+As the website works as intended, there is no need for changes. 
+
+## Testing hunts/hunt statuses appear correctly on the home page. 
+Similar to the test in sprint 2, I am this time testing that the status appear next to them, and they are clickable. 
+
+![Hunts displaying the statuses.](screenshots/display_status_beofre.png)
 
 
 ### Changes / Improvements
 
-Replace this text with notes any improvements you made as a result of the testing.
+I decided it could be helpful/interesting to current/potential users if a map at the top of the screen showed the pins of all the hunts currently in the database; similar to the one on the hunt page. 
 
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
+![New map on the home page.](screenshots/map_added.png)
+
+This can help draw in potential users by seeing if there are ghost locations near them. This also included a database change.
+
+New database:
+![New database with LAT & LON coloums added](screenshots/database_v5.png)
+
+*Note: The lat/lon columns are of type real, not of bigint. Bigint doesn't store decimals, SQLite doesn't have a type decimal, and because they store GPS co-ords I need them to store decimals; hence real. DrawSQL doesn't have an option for real type so I went with bigint. 
+
+I then also decided it would look better again if I added popups to the markers with the address of the ghost sighting. 
+
+Map popup when you click on the markers: 
+![Map popup](screenshots/map_popup.png)
+
+## Testing addresses autofill on the report page. 
+
+I am testing that I can start typing an address and that it will autofill. 
+
+Testing autofill by typing in addresses both kiwi and then from overseas: 
+
+![Map autofilling](screenshots/autofill_working.gif)
 
 
-## ETC...
 
+### Changes / Improvements
+
+As the website works as intended, there is no need for changes here. 
+
+
+## Testing users can send a ghost report at the end of the hunt
+
+While this technically counts as a database interaction, I am testing it again here that the front end & back end work as intended. 
+
+Database before the report is sent: 
+![Database before sending the report](screenshots/report_before.png)
+
+Sending a report from the website: 
+![Sending a final report](screenshots/report_sending_final.gif)
+
+### Changes / Improvements
+
+No changes were needed as the system works as intended 
 
 ## Sprint Review
 

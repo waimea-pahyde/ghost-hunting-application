@@ -230,34 +230,28 @@ marker = L.marker([{{lat}}, {{lon}}]).addTo(map);
     <h3>This hunt is over. Hunt report can be seen below.</h3>
     <p><strong>Hunt recap:</strong>{{hunt.description}}</p>
     <p><strong>Reccomended next action:</strong>{{hunt.recommended_next_action}}</p>
+    
     {%if photos %}
       <h2>Photos from the hunt: </h2>
       {%for photo in photos %}
       {% if not photo.before_hunt %}
           <iMg src="/static/uploads/{{ photo.image }}">
-      
     {%endif%}
-{%endfor%}
+    {%endfor%}
+  {%endif%}
 
     <h3>Original hunt details:</h3>
     <p><strong>Hunt Description</strong>{{hunt.details}}</p>
-    <p><strong>Original hunt photos: </strong></p>
+    
     {%if photos %}
-      <h2>Submitted photos: </h2>
+    <p><strong>Original hunt photos: </strong></p>
+
       {%for photo in photos %}
       {% if photo.before_hunt %}
           <iMg src="/static/uploads/{{ photo.image }}">
     {%endif%}
  {%endfor%}
  {%endif%}
-
-
-
-    {%else %}
-  <p>If you're seeing this, you're somewhere you aren't supposed to be, I've fucked something up, or some god foresaken hole in between. 
-  Let's agree to never speak of this again, okay? </p>
-
-    {% endif %}
 {% endif %}
 
 {% endblock %}

@@ -19,7 +19,7 @@ class userTable:
 
     NAME = "user"
 
-    SCHEMA = """
+    SCHEMA = """ 
         CREATE TABLE user (
             id      INTEGER PRIMARY KEY AUTOINCREMENT,
             forename        TEXT NOT NULL,
@@ -34,7 +34,7 @@ class userTable:
     """
 
     SEED_DATA = """
-        INSERT INTO user (forename, surname, username, reportedHunts, bio, passwordHash, ghostHunter)
+        INSERT INTO user (forename, surname, username, reportedHunts, bio, passwordHash)
         VALUES
             ("Sharon", "Paratrack", "sharontracksghosts", 4, "Hey! I'm Sharon Paratrack. A fun fact about me: I can smell ghosts!", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252"),
             ("Hugh", "Findghost", "hughfindsghosts", 2, "Hey! I'm Hugh Findghost. A fun fact about me: I know the best ghost locations!", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252"),
@@ -73,16 +73,18 @@ class reportedHuntTable:
 
     SCHEMA = """
         CREATE TABLE reportedHunt (
-            id      INTEGER PRIMARY KEY AUTOINCREMENT ,
-            huntLeader      ID REFERENCES user(id),
-            reportedBy    ID REFERENCES user(id) ,
-            details             TEXT NOT NULL, 
-            description        TEXT,
+            id                                            INTEGER PRIMARY KEY AUTOINCREMENT ,
+            huntLeader                             ID REFERENCES user(id),
+            reportedBy                             ID REFERENCES user(id) ,
+            details                                    TEXT NOT NULL, 
+            description                             TEXT,
             recommended_next_action     TEXT,
-            dateReported TIMESTAMP DEFAULT (datetime('now','localtime')) NOT NULL,
-            date_of_hunt    TIMESTAMP,
-            status              TEXT NOT NULL DEFAULT "open",
-            location TEXT NOT NULL
+            dateReported                          TIMESTAMP DEFAULT (datetime('now','localtime')) NOT NULL,
+            date_of_hunt                          TIMESTAMP,
+            status                                      TEXT NOT NULL DEFAULT "open",
+            location                                    TEXT NOT NULL,
+            lat                                             REAL,
+            lon                                             REAL
 
         )
     """
