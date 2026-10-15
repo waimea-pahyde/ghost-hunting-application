@@ -122,7 +122,6 @@ def show_signup():
 
 
 # Signup 
-
 @app.post("/signup")
 def add_user():
     forename = request.form.get('forename', '').strip()
@@ -412,33 +411,6 @@ def get_messages(hunt_id):
         """, (hunt_id, after)).fetchall()
     return jsonify([dict(r) for r in rows])
 
-# Hunt page. Go to see hunt. 
-# Before the hunt starts:
-# See location, the fellow people who are also hunting with me, when it starts, and an option to see the initial report. +Option to proceed into the hunt screen early. 
-# If time: a way back to that screen while the hunt hasn't started. 
-
-# During the hunt:
-# See list of who's participating, messages, initial ghost report, end hunt button. 
-# If time: current location of alll the hunters. 
-
-#After hunt: 
-# A place to summarise the hunt outcomes, a place for recdcomended next steps, a place to get photos, option to return without report. 
-# Figure out how to make this work. Ideas: Allocate one member to create the hunt. Other people send photos to them, they wreite report. Hunt leader situation could be helpful
-#for other things I can't remember. First in is hunt leader? Or, reports get tacked on one after another. 
-
-
-
-
-# Leader system. 
-# Each hunt has a 'leader'
-# If 'people in hunt' = 0 then you're the leader
-# yay
-
-# SEnd report
-# If the user is not logged in, set name as null
-# If the user is logged in, set the person who reported it's hunt to their ID
-
-# not cry  I know exactly what i'm doing look at me go. 
 
 @app.get("/logout")
 @login_required

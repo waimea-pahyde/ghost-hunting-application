@@ -186,7 +186,11 @@ marker = L.marker([{{lat}}, {{lon}}]).addTo(map);
 
   setInterval(loadNew, 3000);         
 </script>
+
 {%endif%}
+    <h3>Original hunt details:</h3>
+    <p><strong>Hunt Description</strong>{{hunt.details}}</p>
+
     {% if user_id == hunt.huntLeader%}
    <form action="/hunt/{{hunt.hunt_id}}/end" method="POST">
     <button type="submit">End Hunt</button>

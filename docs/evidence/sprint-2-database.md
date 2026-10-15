@@ -108,6 +108,8 @@ Before:
 After:
 ![Bottom of hunt page, with new dialog.](screenshots/there_is_no_hunt_leader.png)
 
+I also decided in the hunt it would be helpful if the hunters can see the initial hunt information. 
+
 
 ## Testing hunt leader can be added from hunt page. 
 
