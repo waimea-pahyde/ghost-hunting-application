@@ -51,7 +51,7 @@ This PenPot demo shows the initial design for the UI 'flow':
 
 ### Testing
 
-I showed this design to some potential end users, and they said they liked the flow, but would like an easier way to look through all the locations, and potentially a way to search through the ghost sightings. 
+I showed this design to some potential end users, and they said they liked the flow, but would like an easier way to look through all the locations.
 
 
 ### Changes / Improvements

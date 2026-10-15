@@ -108,17 +108,29 @@ As the website works as intended, there is no need for changes here.
 
 ## Testing users can signup to hunts
 
-I am testing users can signup to huns, and
+I am testing users can signup to huns, and the hutns they have signed up to show up on the home page.
 
-Database before the report is sent: 
-![Database before sending the report](screenshots/report_before.png)
-
-Sending a report from the website: 
-![Sending a final report](screenshots/report_sending_final.gif)
+Joining a hunt
+![Fresh account joiining a hunt](screenshots/join_hunt_joining.gif)
 
 ### Changes / Improvements
 
-No changes were needed as the system works as intended 
+While hunts could correctly be joined, I decided it would be better that if the user hadn't joined any hunts it woul'd say join hunt on the bottom. 
+
+After:
+![Now it doesn't say anything](screenshots/joining_after.png)
+
+## Testing users can upload images and change their profile picture:
+
+I am testing users can vupload images to change their profile picture. 
+
+![Changing profiloe picture](screenshots/picture_profile_changing.gif)
+
+### Changes / Improvements
+
+No changes were needed
+
+
 
 
 ## Sprint Review
