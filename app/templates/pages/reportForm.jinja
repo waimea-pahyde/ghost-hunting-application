@@ -4,10 +4,8 @@
 
 {% extends 'pages/_base.jinja' %}
 
-{# TODO make name anon. #}
 {% block content %}
 <script>
-      // Example: wrap an existing input via JavaScript
 const autofillElement = new MapboxAddressAutofill();
 autofillElement.accessToken = 'pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ';
 autofillElement.options = { country: 'nz' };
@@ -22,29 +20,22 @@ addressForm.appendChild(autofillElement);
 
 </script>
 
+<h1>Make a Ghost Report</h1>
 
+    <section class="form-sec">
 
     <form method="post" action="/sendReport" enctype="multipart/form-data">
-      <label>Location of ghost: 
+      
+
       <mapbox-address-autofill access-token="pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ">
-      <input type="text" name="street" autocomplete="address-line1" />
+      <input type="text" name="street" autocomplete="address-line1" placeholder="Location of ghost..."/> {#Look at floating labels later if there's time. They look interesting. #}
       </mapbox-address-autofill>
-      </label>
-<br>
-      <label>
-        Town of ghost:
-        <input type="text" name="town" autocomplete="address-level2" />
-      </label>
-<br>
-      <label>
-      Country of ghost:
-      <input type="text" name="country" autocomplete="country-name" />
-      </label>
-<br>
-      <label>
-      description of events
-      <input type="text" name="description" required>
-      </label>
+
+        <input type="text" name="town" autocomplete="address-level2" placeholder="Town of ghost" />
+
+      <input type="text" name="country" autocomplete="country-name" placeholder="Country of ghost" />
+
+      <input type="text" name="description" required placeholder="Description of ghost sighting...">
       <br>
       <label>
         Submit Photos:
@@ -59,7 +50,7 @@ addressForm.appendChild(autofillElement);
 
 
     </form>
-
+</section>
 
 {% endblock %}
 

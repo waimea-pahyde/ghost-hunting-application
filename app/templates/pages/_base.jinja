@@ -11,9 +11,9 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>Notes Demo {% block title %}{% endblock %}</title>
+	<title>PATRACK: Ghost hunting {% block title %}{% endblock %}</title>
 
-    <link rel="icon" href="/static/images/note.svg">
+    <link rel="icon" href="/static/images/ghost.svg">
 
 
     <script src="/static/js/utils.js"></script>
@@ -24,15 +24,7 @@
       src="https://api.mapbox.com/search-js/v1.2.0/web.js"
       >
   </script>
-  {# <script>
-  const script = document.getElementById('search-js');
-  script.onload = function() {
-      mapboxsearch.autofill({
-          accessToken: 'pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ'
-      });
-  };
-  </script> #}
-    
+
 
     <link rel="stylesheet" href="/static/css/reset.css">
     <link rel="stylesheet" href="/static/css/messages.css">
@@ -48,25 +40,16 @@
 </head>
 
 <body>
-
-    <header>
-        <a href="/">
-            Paratrack ghost Reporter
-        </a>
-
 {% if session.logged_in %}
-    
-    {%set user_id = session["user"]["id"]%}
-    <a href="/logout">Logout</a>
-    <a href="/profile/{{user_id}}">My profile</a>
-<a href="/report_ghost">Report a ghost sihting!</a>
+  <nav id="bottom-bar">
+  {%set user_id = session["user"]["id"]%}
+    <a href="/profile/{{user_id}}" class="nav-item"><img src="/static/images/profile.svg" alt="My profile" class="nav-img"></a>
+        <a href="/" class="nav-item"><img src="/static/images/home4.svg" alt="Home" class="nav-img"></a>
+    <a href="/report_ghost" class="nav-item"><img src="/static/images/write.svg" alt="Report Ghost" class="nav-img"></a>
 
-{% else %}
-    <a href="/report_ghost">Report a ghost sihting!</a>
-    <a href="/login_page">Login</a>
-    <a href="/signup_page">Sign-Up</a>
 {% endif %}   
-    </header>
+</nav>
+
 
     {# Show flash messages from any previous events #}
     {% include "partials/messages.jinja" %}

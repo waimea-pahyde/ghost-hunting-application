@@ -1,17 +1,16 @@
 /*===========================================================
-  PROJECT NAME HERE
-  By YOUR NAME HERE
-===========================================================*/
+  patrack 
+  By pollywashere
+  ========================================*/
 
 :root {
-    --text-col:         #111;
+    --text-col:         #b7bcbd;
+    --link-col:              #a4cbd1;
 
-    --back-col:         #eee;
-    --back-col-panel:   #fff;
-
+    --back-col:         #282c2f;
+    --sec-col:               #202326;
     --border-col:       #355;
-
-    --accent-col:       #e43;
+    --accent-col:       #5b0e27;
 }
 
 
@@ -24,11 +23,19 @@ html {
     font-family: system-ui, sans-serif;
 }
 
+h1 { 
+  color: #a4cbd1;
+  text-align: center;
+
+}
 
 body {
     min-height: 100dvh;
 }
 
+p {
+  text-align: center;
+}
 
 main {
     max-width: 60rem;
@@ -36,6 +43,84 @@ main {
     padding: 1rem;
 }
 
+#hunt-section {
+  background-color: var(--sec-col);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  flex-wrap: nowrap;
+  padding: 1rem;
+  border-radius: 4rem;
+  p {
+    text-align: left !important;
+    padding-left: 2rem;
+  }
+}
+
+h2 {
+  text-align: center;
+}
+
+.hunt{
+  font-size: large;
+  color: #a4cbd1;
+
+  padding: 1rem   ;
+}
+
+#bottom-bar {
+  position:fixed;
+  bottom: 3%;
+
+  background-color:#c8c9ca6b;
+  display: flex;
+  justify-self: center;
+  justify-content: space-evenly;
+
+  border-radius: 4rem;
+
+}
+
+.nav-item{
+  padding: 1rem;
+  
+}
+
+.nav-img{
+  max-width: 2rem;
+}
+
+.form-sec{
+  background-color: var(--sec-col);
+
+  border-radius: 4rem;
+
+
+  form {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+
+    input{
+      margin: 1rem;
+      border-radius: 0.5rem;
+      max-width: min-content;
+      height: 2.5rem;
+      justify-self: center;
+      background-color: #202326;
+      border-color: #a4cbd1;
+      color: #a4cbd1;
+
+      input::placeholder {
+        color: #a4cbd1;
+      }
+      
+
+
+    }
+  }
+
+}
 
 /* Header & Nav -----------------------------------------------*/
 
@@ -68,41 +153,14 @@ main > h2 {
 
 /* Notes --------------------------------------------------*/
 
-#notes {
-    display: grid;
-    gap: 2rem;
-    grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
-    align-items: start;
 
-    .note {
-        padding: 1rem;
-        box-shadow: 0 0.5rem 1rem #0004;
-        border: 1px solid var(--border-col);
-        background-color: var(--back-col-panel);
+#map { height: 400px; 
+border-radius: 4rem;
+border-width: 12rem;
+border-color: var(--accent-col);
+} 
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
 
-        footer {
-            font-size: 0.8rem;
-            font-style: italic;
-        }
-
-        &.pinned {
-            border-color: var(--accent-col);
-        }
-    }
-}
-
-#map { height: 180px; }
-
-body {
-    font: 16px;
-    background: #f3f5f6;
-  }
   
   .autocomplete-container {
     margin-bottom: 20px;
@@ -170,4 +228,33 @@ body {
   
   .clear-button:hover {
     color: rgba(0, 0, 0, 0.6);
+  }
+
+
+  /* pikmin pikmin was here */
+
+  .link-pretending-to-be-button {
+    padding: 1rem;
+    margin: 1rem;
+    background-color: #5b0e27;
+    border-radius: 50px;
+    color: var(--link-col);
+    text-decoration: none;
+    flex-grow: 0;
+    text-wrap:nowrap;
+
+  }
+
+  .main-sec{
+    background-color: var(--sec-col);
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: nowrap;
+    padding: 1rem;
+    border-radius: 16rem;
+  }
+
+  h3 {
+    align-self: center;
+    margin: 1rem;
   }

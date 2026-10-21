@@ -24,6 +24,9 @@
 {%endif%}
 {% if session["user"]["id"] == user.id%}
 <a href="/profile/{{user.id}}/edit">Edit Profile</a>
+<a href="/logout" class="nav-item">Logout</a>
 {%endif%}
+
+
 {% endblock %}
 

@@ -6,11 +6,18 @@
 
 
 {% block content %}
-{# If logged in and ghost hunter: Show all hunts available, plus the hunts you've signed up to.  #}
-{# if logged in and *not* a ghost hunter: Show only the hunts you've reported. #}
-{# If not logged in: Show all hunts available.  #}
+
+{# We're not doing a header, this is just there for the links. Instead, add things onto the home page. Login, signup and such.  #}
+
+
+
+
+  <h1>PATRACK GHOST REPORTS</h1>
+  <p>Ghosts could be near you. Report them so we can find them.</p>
+
 
     <div id="map"></div>
+    
     <script>
     var map = L.map('map').setView([0, 0], 2); 
 
@@ -18,6 +25,8 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
     
+
+
     {% for hunt in hunts %}
     marker = L.marker([{{hunt.lat}}, {{hunt.lon}}]).addTo(map);        
     marker.bindTooltip("{{hunt.location}}", {
@@ -31,26 +40,44 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     
     </script>
 
-{#     marker.bindPopup("{{hunt.location}}"); #}
- 
+  
+  <br>
 
+  {% if not session.logged_in %}
+    <section class="main-sec">
+  <h3> Signup to participate in ghost hunts. Or, report a ghost anonomously. </h3>
+  <br>
+
+    <a href="/report_ghost" class="link-pretending-to-be-button">Report a ghost sihting!</a>
+    <a href="/login_page" class="link-pretending-to-be-button">Login</a>
+    <a href="/signup_page"class="link-pretending-to-be-button">Sign-Up</a>
+</section>
+{% endif %}   
+
+ 
+  <br>
+    <section id="hunt-section">
     <h2>All hunts available: </h2>
     {%for hunt in hunts %}
     <br>
-   <a href="/view_hunt/{{hunt.id}}">{{hunt.location}}</a>
+   <a href="/view_hunt/{{hunt.id}}" class="hunt">{{hunt.location}}</a>
    <p> Hunt status: {{hunt.status}}</p>
     {%endfor%}
-
+</section>
+<br>
    
   {% if myHunts  %}
-  <h2>My hunts:</h2>
+      <section id="hunt-section">
+        <h2>My hunts:</h2>
     {%for hunt in myHunts %}
       <br>
-      <a href="/view_hunt/{{hunt.id}}">{{hunt.location}}</a>
+      <a href="/view_hunt/{{hunt.id}}" class="hunt">{{hunt.location}}</a>
          <p> Hunt status: {{hunt.status}}</p>
 
 
       {%endfor%}
+      </section>
+
     {%endif%}
     
    
