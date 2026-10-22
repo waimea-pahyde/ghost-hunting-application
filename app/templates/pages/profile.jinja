@@ -6,27 +6,42 @@
 
 
 {% block content %}
-<h1>{{user.forename}} {{user.surname}}</h1>
-<iMg src="/static/uploads/{{ user.profile_picture }}">
-<p>{{user.bio}}</p>
-<h2>Previous HUnts:</h2>
-{%for hunt in previous_hunts%}
-<p>{{hunt.location}} | {{hunt.status}}</p>
-<br>
 
-{%endfor%}
-{% if reported_hunts%}
-<h2>Reported Hunts:</h2>   
-{% for hunt in reported_hunts%}
-<p>{{hunt.location}} | {{hunt.status}}</p>
-<br>
-{%endfor%}
+<div class="profile">
+<img src="/static/uploads/{{ user.profile_picture }}" id="profile-pic">
+<h1>{{user.forename}} {{user.surname}}</h1>
+{% if user.bio == None%}
+<p>This user has not set a bio yet!</p>
+{%else%}
+<p>{{user.bio}}</p>
 {%endif%}
 {% if session["user"]["id"] == user.id%}
-<a href="/profile/{{user.id}}/edit">Edit Profile</a>
-<a href="/logout" class="nav-item">Logout</a>
+<p><a href="/profile/{{user.id}}/edit" class="nav-item">Edit Profile</a> | <a href="/logout" class="nav-item">Logout</a></p>
 {%endif%}
 
+
+</div>
+
+{% if previous_hunts%}
+<div class="profile">
+<h2>Previous Hunts:</h2>
+{%for hunt in previous_hunts%}
+<p><a href="/view_hunt/{{hunt.id}}">{{hunt.location}} | {{hunt.status}}</a></p>
+<br>
+{%endfor%}
+</div>
+{%endif%}
+
+
+{% if reported_hunts%}
+<div class="profile">
+<h2>Reported Hunts:</h2>   
+{% for hunt in reported_hunts%}
+<p><a href="/view_hunt/{{hunt.id}}">{{hunt.location}} | {{hunt.status}}</a></p>
+<br>
+{%endfor%}
+</div>
+{%endif%}
 
 {% endblock %}
 

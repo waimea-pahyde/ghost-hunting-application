@@ -23,6 +23,7 @@ UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
 # Create the app
 app = Flask(__name__)
 
+
 @app.get("/")
 def show_home():
 
@@ -273,19 +274,13 @@ def end_hunt(id):
 def view_hunt(id):
     with connect_db() as db:
         sql = """
-            SELECT  
+            SELECT 
+            reportedHunt.*, 
             reportedHunt.id  AS hunt_id,
-            reportedHunt.huntLeader    ,
-            reportedHunt.reportedBy ,
-            reportedHunt.details   , 
-            reportedHunt.description,
-            reportedHunt.recommended_next_action,
-            reportedHunt.dateReported,
-            reportedHunt.date_of_hunt,
-            reportedHunt.status,
-            reportedHunt.location,
             leader.username AS leader_username,
-            reporter.username AS reporter_username
+            reporter.username AS reporter_username,
+            leader.id AS leader_id,
+            reporter.id AS reporter_id
             FROM reportedHunt
             LEFT JOIN user AS reporter ON reportedHunt.reportedBy = reporter.id
             LEFT JOIN user AS leader ON reportedHunt.huntLeader = leader.id

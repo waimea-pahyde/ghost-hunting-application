@@ -1,263 +1,357 @@
 {# hunt page #}
-
-{% extends 'pages/_base.jinja' %}
-
-{# If not a ghost hunter: Do not show the 'join hunt' button.  #}
+{% extends "pages/_base.jinja" %}
 {% block content %}
-
-  {% if hunt.status == "open"%}
-
-
-
-    <h1>Hunt at {{hunt.location}}</h1>
-    <h2>Hunt information:</h2>
-    <p>{{hunt.details}} </p>
-    
-    {%if photos %}
-      <h2>Submitted photos: </h2>
-      {%for photo in photos %}
-      <iMg src="/static/uploads/{{ photo.image }}">
-      {%endfor%}
-    {%endif%}
-    <p><strong>Current status: </strong>{{hunt.status}}</p>
-    
-      {% if hunt.reportedBy == none %} 
-      {% set reporter_username = "Anonomous" %}
-    {%else%}
-      {% set reporter_username = hunt.reporter_username %}
-    {%endif%}
-    
-    <p><strong>Reported by: </strong>{{reporter_username}}</p>
-
-    <br>
-    
-    <p>Hunt reported on: {{ hunt.dateReported }}     </p>
-    
-    {% if hunt.leader_username == None%}
-    <p>There is no hunt leader. Be the first to 'Join Hunt' and be the leader of this hunt! </p>
-    {%else%}  
-    <p>Hunt leader is {{  hunt.leader_username }}</p>
-    {%endif %}
-    
-    {% if session.logged_in %}
-     <form method="post" action="/join_hunt/{{hunt.hunt_id}}">
-    <button>Join Hunt</button>
-     </form>
-     {% else%}
-     <p>Please log in to participate in the hunt! </p>
-     {% endif%}
-
-
- {#As days go by I find myself more wishful for the when statement.   #}
-    
-{% if user_id == hunt.huntLeader and hunt.date_of_hunt is none %}
-  <form method="post" action="/set_date/{{ hunt.hunt_id }}" id="dateForm">
-    <label>
-      Pick a date for the hunt!
-      <input type="datetime-local" id="local_date" required>
-    </label>
-    <input type="hidden" name="date_of_hunt" id="date_of_hunt">
-    <button>Submit date</button>
-  </form>
-
-  <script>
+  {% if hunt.status == "open" %}
+    <h1>Hunt at {{ hunt.location }}</h1>
+    <h3>{{ hunt.lon }},{{ hunt.lat }}</h3>
+    <section id="info">
+      <h2>Hunt information Given:</h2>
+      <p><em>"{{ hunt.details }}"</em> </p>
+    </section>
+    {% if photos %}
+      <h2>Submitted photos:</h2>
+      <section id="sec-images">
+        {% for photo in photos %}
+          <div class="zoom-box">
+            <label>
+              <input type="checkbox">
+              <img src="/static/uploads/{{ photo.image }}">
+            </label>
+          </div>
+        {% endfor %}
+      </section>
+    {% endif %}
+    <div class="div-info">
+      <p><strong>Current status: </strong>{{ hunt.status }}</p>
+      {% if hunt.reportedBy == none %}
+        <p><strong>Reported by: </strong>Anonomous</p>
+      {% else %}
+        <p><strong>Reported by: </strong><a href="/profile/{{ hunt.reporter_id }}">{{ hunt.reporter_username }}</a></p>
+      {% endif %}
+      <p><strong>Hunt reported on: </strong>{{ hunt.dateReported }} </p>
+    </div>
+    <div class="div-info">
+      {% if hunt.leader_username == None %}
+        <p>There is no hunt leader. Be the first to 'Join Hunt' and be the leader of this hunt!</p>
+      {% else %}
+        <p><strong>Hunt leader is:</strong> <a href="/profile/{{ hunt.leader_id }}">{{ hunt.leader_username }}</a></p>
+      {% endif %}
+      
+      
+      {% if session.logged_in  %}
+        <form method="post" action="/join_hunt/{{ hunt.hunt_id }}">
+          <button>Join Hunt</button>
+        </form>
+      {% endif %}
+      {#As days go by I find myself more wishful for the when statement. #}
+      {% if user_id == hunt.huntLeader and hunt.date_of_hunt is none %}
+        <section class="main-sec">
+        <form method="post" action="/set_date/{{ hunt.hunt_id }}" id="dateForm">
+          <label>
+            Pick a date for the hunt!
+            <input type="datetime-local" id="local_date" required>
+          </label>
+          <input type="hidden" name="date_of_hunt" id="date_of_hunt">
+          <button>Submit date</button>
+        </form>
+        <script>
     document.getElementById("dateForm").addEventListener("submit", () => {
       const local = document.getElementById("local_date").value;
       document.getElementById("date_of_hunt").value = new Date(local).toISOString();
     });
-  </script>
-    {% elif user_id != hunt.huntLeader %}
-      <p>Only the leader can pick a day for this hunt! </p>
-    {% else %}
-      <p>Hunt starts at
-      <time class="local-time" datetime="{{ hunt.date_of_hunt }}">{{ hunt.date_of_hunt }}</time>
-      </p>
-       <h2 id="hunt_timer"></h2>
-    <script> // Made w the help W3schools, I'm running out of time to finish the project, letalone learn js. I do know what's going on though. 
-      // Set the date we're counting down to
-       var countdown_date = new Date({{ hunt.date_of_hunt | tojson }}).getTime();
+        </script>
+        </section>
+      {% elif user_id != hunt.huntLeader %}
+        <p>Only the leader can pick a day for this hunt!</p>
+      {% else %}
+        <p>
+          Hunt starts at
+          <time class="local-time" datetime="{{ hunt.date_of_hunt }}">{{ hunt.date_of_hunt }}</time>
+        </p>
+        <h2 id="hunt_timer"></h2>
+        <script> // Made w the help W3schools, I'm running out of time to finish the project, letalone learn js. I do know what's going on though. 
+    // Set the date we're counting down to
+    var countdown_date = new Date({{ hunt.date_of_hunt | tojson }}).getTime();
 
-// Update the count down every 1 second
-      var x = setInterval(function() {
+    // Update the count down every 1 second
+    var x = setInterval(function () {
 
-  // Get today's date and time
+      // Get today's date and time
       var now = new Date().getTime();
 
-  // Find the distance between now and the count down date
+      // Find the distance between now and the count down date
       var distance = countdown_date - now;
 
-  // Time calculations for days, hours, minutes and seconds
+      // Time calculations for days, hours, minutes and seconds
       var days = Math.floor(distance / (1000 * 60 * 60 * 24));
       var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-  // Display the result in the element with id="demo"
-     document.getElementById("hunt_timer").innerHTML = "Hunt starts in: " + days + "d " + hours + "h "
-      + minutes + "m " + seconds + "s ";
+      // Display the result in the element with id="demo"
+      document.getElementById("hunt_timer").innerHTML = "Hunt starts in: " + days + "d " + hours + "h "
+        + minutes + "m " + seconds + "s ";
 
-  // If the countdown is finished, write some text
+      // If the countdown is finished, write some text
 
       if (distance < 0) {
-      clearInterval(x);
-      document.getElementById("hunt_timer").innerHTML = "Hunt is currently active.";}
-      } , 1000);
-  </script>
-    
-    {%endif%}
-
-
-  {% elif hunt.status == "hunting"%}
-    <h1>Hunt at {{hunt.location}}</h1>
-   
-  <h3>Hunt Participants:</h3>
-    {% for participant in participants%}
-     <a href="/profile/{{participant.id}}"> {{ participant.forename }}
-      {{participant.surname}}</a>
-    <br>
-    
-    {%endfor%}
-
-  {% if not signed_up %}
-     <form method="post" action="/join_hunt/{{hunt.hunt_id}}">
-    <button>Join Hunt</button>
-     </form>
-    {% endif%}
-    
-    <h3>Hunt Location: </h3>
+        clearInterval(x);
+        document.getElementById("hunt_timer").innerHTML = "Hunt is currently active.";
+      }
+    }, 1000);
+        </script>
+        </div>
+      {% endif %}
+  {% elif hunt.status == "hunting" %}
+    <h1>Hunt at {{ hunt.location }}</h1>
+    <h3>{{ hunt.lon }},{{ hunt.lat }}</h3>
+    <h3>Hunt Participants:</h3>
+    <div id="participants">
+      {% for participant in participants %}
+        <a href="/profile/{{ participant.id }}"> - {{ participant.forename }}
+          {{ participant.surname }}
+          {% if participant.ghostHunterID == hunt.leader_id %}(Leader) {% endif %}</a>
+        <br>
+      {% endfor %}
+      {% if not signed_up %}
+        <div id="center-me">
+          <form method="post" action="/join_hunt/{{ hunt.hunt_id }}">
+            <button>Join Hunt</button>
+          </form>
+        </div>
+      {% endif %}
+    </div>
+    <h3>Hunt Location:</h3>
     <div id="map"></div>
-    {% set location = hunt.location%}
+    {% set location = hunt.location %}
     <script>
-    var map = L.map('map').setView([0, 0], 2); 
-    map.setView([{{lat}}, {{lon}}], 13);
+  var map = L.map('map').setView([0, 0], 2);
+  map.setView([{{ lat }}, {{ lon }}], 13);
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(map);
-marker = L.marker([{{lat}}, {{lon}}]).addTo(map);          
-    
+  }).addTo(map);
+  marker = L.marker([{{ lat }}, {{ lon }}]).addTo(map);
+
     </script>
-{% if signed_up%}
-    <h2>Hunt chat: </h2>
-    
- <div id="messages">
-  {% for message in messages %}
-    <p data-id="{{ message.id }}">{{ message.forename }} {{ message.surname }}: {{ message.body }}</p>
-  {% endfor %}
-</div>
+    {% if signed_up %}
+      <section id="all-message">
+        <h2>Hunt chat</h2>
+        <div id="messages">
+          {% for message in messages %}
+            <p data-id="{{ message.id }}" class="sent-message">{{ message.forename }} {{ message.surname }}: {{ message.body }}</p>
+          {% endfor %}
+        </div>
+        <section id="send-message">
+          <form id="message_form" method="post" action="/message/{{ hunt.hunt_id }}/">
+            <input type="text"
+                   name="body"
+                   id="body"
+                   required
+                   autocomplete="off"
+                   placeholder="Send Message...">
+            {# 'OoOooOOo POlLy JuSt RenDeR iT wItH iMagE' IVE BEEN TRYING THAT FOR FOURTY FIVE GOD
+      FORESAKEN MINUTES. I'M RENDERING IT MANUALLY. SCREW ALL OF YOU. I DON'T KNOW WHY IT HATES
+      *THIS* SVG SPECIFICALLY. I COULDNT TELL YOU THE FIRST DAMN THING ABOUNT SVGS APART FROM
+      THEY AREN'T IMAGES THEY'RE CODE. SO SCREW THIS. SCREW ALL OF YOU. IM DOING IT MANUALLY LIKE
+      GOD INTENDED.#}
+            <button aria-label="Send">
+              <svg version="1.1"
+                   id="Icons"
+                   xmlns="http://w3.org"
+                   viewBox="0 0 32 32"
+                   style="width: 24px;
+                          height: 24px">
+                <path fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M26.4,2.9L3.8,15c-0.7,0.4-0.7,1.5,0.1,1.8l20.8,8.7c0.6,0.3,1.3-0.2,1.4-0.8l1.7-20.8C27.9,3,27.1,2.5,26.4,2.9z" />
+                <path fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10" d="M26,4L13,20v7.3c0,0.9,1.2,1.4,1.8,0.7L19,23" />
+              </svg>
+            </button>
+          </form>
+        </section>
+        <script>
+    const huntId = {{ hunt.hunt_id }};
+    const box = document.getElementById("messages");
+    const form = document.getElementById("message_form");
+    const input = document.getElementById("body");
 
-<section>
-  <h2>Send Message</h2>
-  <form id="messageForm" method="post" action="/message/{{ hunt.hunt_id }}/">
-    <input type="text" name="body" id="body" required autocomplete="off">
-    <button>Send</button>
-  </form>
-</section>
-
-<script>
-  const huntId = {{ hunt.hunt_id }};
-  const box = document.getElementById("messages");
-  const form = document.getElementById("messageForm");
-  const input = document.getElementById("body");
-
-  function lastId() {
-    const last = box.lastElementChild;
-    return last ? last.dataset.id : 0;
-  }
-
-  async function loadNew() {
-    const res = await fetch(`/messages/${huntId}/?after=${lastId()}`);
-    if (!res.ok) return;
-    for (const m of await res.json()) {
-      const p = document.createElement("p");
-      p.dataset.id = m.id;
-      p.textContent = `${m.forename} ${m.surname}: ${m.body}`; // textContent, not innerHTML
-      box.appendChild(p);
+    function lastId() {
+      const last = box.lastElementChild;
+      return last ? last.dataset.id : 0;
     }
-  }
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();          
-    await fetch(form.action, { method: "POST", body: new FormData(form) });
-    input.value = "";
-    loadNew();                   
-  });
+    async function loadNew() {
+      const res = await fetch(`/messages/${huntId}/?after=${lastId()}`);
+      if (!res.ok) return;
+      for (const m of await res.json()) {
+        const p = document.createElement("p");
+        p.dataset.id = m.id;
+        p.textContent = `${m.forename} ${m.surname}: ${m.body}`; // textContent, not innerHTML
+        box.appendChild(p);
+      }
+    }
 
-  setInterval(loadNew, 3000);         
-</script>
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await fetch(form.action, { method: "POST", body: new FormData(form) });
+      input.value = "";
+      loadNew();
+    });
 
-{%endif%}
+    setInterval(loadNew, 3000);         
+        </script>
+      </section>
+    {% endif %}
+    <div class="div-info">
+      <h2>Hunt information Given:</h2>
+      <p><em>"{{ hunt.details }}"</em> </p>
+      <p><strong>Current status: </strong>{{ hunt.status }}</p>
+      {% if hunt.reportedBy == none %}
+        <p><strong>Reported by: </strong>Anonomous</p>
+      {% else %}
+        <p><strong>Reported by: </strong><a href="/profile/{{ hunt.reporter_id }}">{{ hunt.reporter_username }}</a></p>
+      {% endif %}
+      <p><strong>Hunt reported on: </strong>{{ hunt.dateReported }} </p>
+      {% if user_id == hunt.huntLeader %}
+        <p>Hunt finished?</p>
+        <form action="/hunt/{{ hunt.hunt_id }}/end" method="post">
+          <button type="submit">End Hunt</button>
+        </form>
+      {% endif %}
+    </div>
+  {% elif hunt.status == "Hunt Ended" %}
+    {% if user_id == hunt.huntLeader %}
+      <h2>Hunt Report</h2>
+      <section class="form-sec">
+        <form method="post"hjhjhj
+              action="/send_report/{{ hunt.hunt_id }}"
+              enctype="multipart/form-data">
+          <textarea type="text"
+                    name="description"
+                    required
+                    placeholder="description of hunt events..."></textarea>
+          <textarea type="test"
+                    name="next_action"
+                    required
+                    placeholder="Recommended next actions..."></textarea>
+          <label class="drop-zone" id="dropZone">
+            <span class="drop-zone-text">Drag & drop your photos here or click to browse</span>
+            <input type="file"
+                   name="images"
+                   class="hidden-input"
+                   accept="image/png, image/jpeg, image/gif, image/webp"
+                   multiple
+                   id="imageInput">
+          </label>
+          <div id="preview-container"></div>
+          <script>
+      const dropZone = document.getElementById('dropZone');
+      const input = document.getElementById('imageInput');
+      const previewContainer = document.getElementById('preview-container');
+
+      // Prevent browser default behavior for dragging files
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      // Highlight drop zone when item is dragged over it
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
+      });
+
+      // Handle dropped files
+      dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        input.files = files; // Assign files to the hidden input form
+        handleFiles(files);
+      });
+
+      // Handle clicked/selected files
+      input.addEventListener('change', function () {
+        handleFiles(this.files);
+      });
+
+      // Generate image thumbnails
+      function handleFiles(files) {
+        previewContainer.innerHTML = '';
+        Array.from(files).forEach(file => {
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              const img = document.createElement('img');
+              img.src = e.target.result;
+              img.classList.add('preview-thumb');
+              previewContainer.appendChild(img);
+            }
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+          </script>
+          <button>Submit</button>
+        </form>
+      </section>
+    {% else %}
+      <p>Only the leader can submit a report on the hunt.</p>
+    {% endif %}
+  {% elif hunt.status=="Report Submitted" %}
+    <h1>Hunt at {{ hunt.location }}</h1>
+    <div class="div-info">
+      <h3>This hunt is over. Hunt report can be seen below.</h3>
+      <p><strong>Hunt recap: </strong><em>"{{ hunt.description }}"</em></p>
+      <p><strong>Recommended next action: </strong><em>"{{ hunt.recommended_next_action }}"</em></p>
+    </div>
+    {% if photos %}
+      <h2>Photos from the hunt:</h2>
+      <section id="sec-images">
+        {% for photo in photos %}
+          {% if not photo.before_hunt %}
+            <div class="zoom-box">
+              <label>
+                <input type="checkbox">
+                <img src="/static/uploads/{{ photo.image }}">
+              </label>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </section>
+    {% endif %}
+    <div class="div-info">
     <h3>Original hunt details:</h3>
-    <p><strong>Hunt Description</strong>{{hunt.details}}</p>
+    <p><strong>Hunt Description: </strong><em>"{{ hunt.details }}"</em></p>
+          {% if hunt.reportedBy == none %}
+        <p><strong>Reported by: </strong>Anonomous</p>
+      {% else %}
+        <p><strong>Reported by: </strong><a href="/profile/{{ hunt.reporter_id }}">{{ hunt.reporter_username }}</a></p>
+      {% endif %}
+      <p><strong>Hunt reported on: </strong>{{ hunt.dateReported }} </p>
 
-    {% if user_id == hunt.huntLeader%}
-   <form action="/hunt/{{hunt.hunt_id}}/end" method="POST">
-    <button type="submit">End Hunt</button>
-</form>
+    </div>
+    {% if photos %}
+      <h2>Original report photos: </h2>
+              <section id="sec-images">
+        {% for photo in photos %}
+          {% if photo.before_hunt %}
+            <div class="zoom-box">
+              <label>
+                <input type="checkbox">
+                <img src="/static/uploads/{{ photo.image }}">
+              </label>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </section>
 
     {% endif %}
-
-  {% elif hunt.status == "Hunt Ended"%}
-     {% if user_id == hunt.huntLeader %}
-
-
-  <p>Please submit a report on the hunt! </p>
-    <form method="post" action="/send_report/{{hunt.hunt_id}}" enctype="multipart/form-data">
-            <label>
-      Description of events:
-      <input type="text" name="description" required>
-      </label>
-            <label>
-      reccomended next action:
-      <input type="test" name="next_action" required>
-      </label>
-      <label>
-        Submit Photos:
-        <input
-            name="images"
-            type="file"
-            accept="image/png, image/jpeg, image/gif, image/webp"
-            multiple
-        >
-    </label>
-
-
-
-      <button >Submit</button>
-    </form>
-    {% else%}
-  <p>Only the leader can submit a report on the hunt. </p>
-    {% endif%}
-  {% elif hunt.status=="Report Submitted"%}
-    <h1>Hunt at {{hunt.location}}</h1>
-    <h3>This hunt is over. Hunt report can be seen below.</h3>
-    <p><strong>Hunt recap:</strong>{{hunt.description}}</p>
-    <p><strong>Reccomended next action:</strong>{{hunt.recommended_next_action}}</p>
-    
-    {%if photos %}
-      <h2>Photos from the hunt: </h2>
-      {%for photo in photos %}
-      {% if not photo.before_hunt %}
-          <iMg src="/static/uploads/{{ photo.image }}">
-    {%endif%}
-    {%endfor%}
-  {%endif%}
-
-    <h3>Original hunt details:</h3>
-    <p><strong>Hunt Description</strong>{{hunt.details}}</p>
-    
-    {%if photos %}
-    <p><strong>Original hunt photos: </strong></p>
-
-      {%for photo in photos %}
-      {% if photo.before_hunt %}
-          <iMg src="/static/uploads/{{ photo.image }}">
-    {%endif%}
- {%endfor%}
- {%endif%}
-{% endif %}
-
+  {% endif %}
 {% endblock %}
- 
-  

@@ -19,8 +19,8 @@
 html {
     background-color: var(--back-col);
     color: var(--text-col);
-
     font-family: system-ui, sans-serif;
+    justify-content: center;
 }
 
 h1 { 
@@ -51,6 +51,7 @@ main {
   flex-wrap: nowrap;
   padding: 1rem;
   border-radius: 4rem;
+
   p {
     text-align: left !important;
     padding-left: 2rem;
@@ -76,8 +77,10 @@ h2 {
   display: flex;
   justify-self: center;
   justify-content: space-evenly;
-
+  left: 50%;
+  transform: translateX(-50%);
   border-radius: 4rem;
+  z-index: 1000;
 
 }
 
@@ -92,16 +95,325 @@ h2 {
 
 .form-sec{
   background-color: var(--sec-col);
+  width: 100%;
+  border-radius: 2rem;
+  display: flex;
+  align-items: center;
+  margin: 0 auto;
+  flex-direction: column;
+  padding: 0.5rem;
 
-  border-radius: 4rem;
+  p {
+    margin-bottom: 0.5rem;
+   }
 
+   a {
+    color: var(--link-col);
+   }
 
   form {
+    margin: 1rem;
+    margin-bottom:0.5rem;
     flex-direction: column;
     display: flex;
     align-items: center;
+    width: 100%;
+
+    button {
+      border-radius: 4rem;
+      background-color: #5b0e27;
+      border-color: #a4cbd1;
+      border-width: 0.2rem;
+      color: #a4cbd1;
+      margin-bottom: 1rem;
+      margin-top: 1rem;
+      font-size: large;
+      width: 75%;
+      height: 25;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      padding-left: 2rem;
+      padding-right: 2rem;
+      
+      
+  
+    }
+
+
 
     input{
+      margin: 1rem;
+      border-radius: 0.5rem;
+      width: 75%;
+      height: 2.5rem;
+      justify-self: center;
+      background-color: #202326;
+      border-color: #a4cbd1;
+      color: #a4cbd1;
+      padding-left: 10px;
+
+
+
+      input::placeholder {
+        color: #a4cbd1;
+        text-wrap: wrap;
+        
+
+      }
+      
+
+
+    }
+  }
+
+}
+
+textarea {
+  height: 5rem;
+  width: 75%;
+  margin-bottom: 1rem;
+  background-color: var(--sec-col);
+  border: 0.1rem solid var(--link-col);
+  border-radius: 0.5rem;
+  color: var(--link-col);
+
+
+}
+
+
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 400px;
+  height: 50px;
+  padding: 20px;
+  border: 2px dashed var(--link-col);
+  border-radius: 8px;
+  background-color: var(--sec-col);
+  color: var(--link-col);
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  background-color: var(--border-col);
+  border-color: var(--link-col);
+  color: var(--link-col);
+}
+.drop-zone-text {
+  font-weight: 500;
+  color: var(--text-col);
+}
+.hidden-input {
+  display: none;
+}
+#preview-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+  max-width: 400px;
+}
+.preview-thumb {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* hunt page */
+h3 {
+  text-align: center;
+  font-size: larger;
+}
+
+#info {
+  background-color: var(--sec-col);
+  color: var(--text-col);
+  max-width: 100%;
+  margin: 0 auto;
+  border-radius: 4rem;
+  padding: 0.5rem;
+
+
+  p {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+button {
+  border-radius: 4rem;
+  background-color: #5b0e27;
+  border-color: #a4cbd1;
+  border-width: 0.2rem;
+  color: #a4cbd1;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  font-size: large;
+  max-width: max-content;
+  padding:0.5rem;
+}
+
+#center-me{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#sec-images{
+  background-color: var(--sec-col);
+  color: var(--text-col);
+  max-width: 100%;
+  margin: 0 auto;
+  border-radius: 4rem;
+  flex-wrap: wrap;
+  display: flex;
+  padding: 1rem;
+
+
+  .zoom-box {
+    display: inline-block;
+    overflow: visible; 
+    position: relative;
+  }
+  
+  .zoom-box input[type="checkbox"] {
+    display: none;
+  }
+  
+  /* It is here, four pages worth of css in, that I realised I should've been using Divs and not sections. Whoopsie daisy. Please don't mark me down, I really didn't know the difference :sob: */
+  .zoom-box img {
+    max-width: 15rem;
+    margin: 1rem;
+    transition: transform 0.3s ease;
+    cursor: zoom-in;
+    position: relative;
+    z-index: 1;
+    border-radius: 1rem;
+    border: 2px solid var(--accent-col)
+
+  }
+  /* TODO ask if I'll get marked down based on my disgusting lack of consistancy between rem adn pixels. I ike them both. */
+
+  
+ /* Not sure what little css rabbit hole I've dug myself into, but it's certainly one of them. Mark this as the second dayI've taken off school to persue css. I didn't even know tildas were a thing in css before now. But it's pretty nifty. I love css.*/
+  .zoom-box input[type="checkbox"]:checked ~ img {
+    transform: scale(2); 
+    cursor: zoom-out;
+    z-index: 999; 
+  }
+
+}
+
+.div-info{
+  background-color: var(--sec-col);
+  border: 2px solid var(--link-col);
+  border-radius: 4rem;
+  color: var(--text-col);
+  padding: 1rem;
+  margin: 2rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+
+/* 5 years of DTD and I've finally learnt the difference between margin and padding.  */
+  p {
+    font-size: large;
+    margin: 10px;
+  }
+
+  a{ 
+    color:var(--link-col);
+  }
+  button {
+    border-radius: 4rem;
+    background-color: #5b0e27;
+    border-color: #a4cbd1;
+    border-width: 0.2rem;
+    color: #a4cbd1;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    font-size: large;
+    max-width: max-content;
+    
+
+  }
+
+
+}
+
+/* The hardest part of alignment continues to be my lack of knowledge on 
+advanced programming techniques such as 'left'; and the infamous continuation 'right' */
+#participants {
+  background-color: var(--sec-col);
+  border-radius: 2rem;
+  color: var(--text-col);
+  padding: 1rem;
+  margin: 2rem;
+  display: flex;
+  align-items: left;
+  flex-direction: column;
+  
+  a {
+    
+    color: var(--link-col);
+    margin: 0.5rem;
+  }
+
+  button {
+    font-size: large;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+}
+
+#all-message{ 
+  background-color: var(--sec-col);
+  color: var(--text-col);
+  border-radius: 4rem;
+  margin: 0 auto;
+  padding: 1rem;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  p {
+    align-self: left;
+  }
+
+
+}
+
+.sent-message{
+  justify-self: left;
+}
+
+#send-message{
+  background-color: var(--sec-col);
+  max-width: min-content;
+  border-radius: 2rem;
+  display: flex;
+
+  margin: 1rem;
+}
+
+#message_form{
+display: flex;
+
+input {
       margin: 1rem;
       border-radius: 0.5rem;
       max-width: min-content;
@@ -110,16 +422,12 @@ h2 {
       background-color: #202326;
       border-color: #a4cbd1;
       color: #a4cbd1;
+      padding-left: 10px;
+}
 
-      input::placeholder {
-        color: #a4cbd1;
-      }
-      
-
-
-    }
-  }
-
+svg {
+  max-width: max-content;
+}
 }
 
 /* Header & Nav -----------------------------------------------*/
@@ -141,6 +449,22 @@ body > header {
     }
 }
 
+body > header {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+
+    nav {
+        display: flex;
+        gap: 1rem;
+
+        a {
+            color: var(--accent-col);
+        }
+    }
+}
 
 /* Page Headings -----------------------------------------------*/
 
@@ -157,7 +481,8 @@ main > h2 {
 #map { height: 400px; 
 border-radius: 4rem;
 border-width: 12rem;
-border-color: var(--accent-col);
+border: 6px solid var(--accent-col);
+margin-bottom: 2rem;
 } 
 
 
@@ -242,6 +567,7 @@ border-color: var(--accent-col);
     text-decoration: none;
     flex-grow: 0;
     text-wrap:nowrap;
+    border: 3px solid var(--link-col);
 
   }
 
@@ -249,12 +575,41 @@ border-color: var(--accent-col);
     background-color: var(--sec-col);
     display: flex;
     justify-content: space-around;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     padding: 1rem;
-    border-radius: 16rem;
+    border-radius: 4rem;
+    align-items: center;
+    justify-content: center;
+
+  }
+
+  #hunt-timer{
+    margin: 1rem;
   }
 
   h3 {
     align-self: center;
     margin: 1rem;
+  }
+
+  #profile-pic {
+    border-radius: 100%;
+    max-width:20% ;
+    border: 5px solid var(--accent-col);
+  }
+
+  .profile {
+    display:flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--sec-col);
+    color: var(--text-col);
+    border-radius: 2rem;
+    padding: 1rem;
+    margin: 1rem;
+
+    a {
+      color: var(--link-col);
+    }
   }

@@ -26,27 +26,87 @@ addressForm.appendChild(autofillElement);
 
     <form method="post" action="/sendReport" enctype="multipart/form-data">
       
-
+ 
       <mapbox-address-autofill access-token="pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ">
-      <input type="text" name="street" autocomplete="address-line1" placeholder="Location of ghost..."/> {#Look at floating labels later if there's time. They look interesting. #}
+      <input type="text" name="street" autocomplete="address-line1" placeholder="Location of ghost"/> {#Look at floating labels later if there's time. They look interesting. #}
       </mapbox-address-autofill>
 
         <input type="text" name="town" autocomplete="address-level2" placeholder="Town of ghost" />
 
       <input type="text" name="country" autocomplete="country-name" placeholder="Country of ghost" />
 
-      <input type="text" name="description" required placeholder="Description of ghost sighting...">
-      <br>
-      <label>
-        Submit Photos:
-        <input
-            name="images"
-            type="file"
-            accept="image/png, image/jpeg, image/gif, image/webp"
-            multiple
-        >
-    </label>
-      <button >Submit</button>
+      <textarea name="description" required placeholder="Description of ghost sighting..." id="desc"></textarea>
+
+
+<label class="drop-zone" id="dropZone">
+  <span class="drop-zone-text">Drag & drop your photos here or click to browse</span>
+  <input 
+    type="file" 
+    name="images" 
+    class="hidden-input"
+    accept="image/png, image/jpeg, image/gif, image/webp" 
+    multiple 
+    id="imageInput"
+  >
+</label>
+<div id="preview-container"></div>
+
+<script>
+  const dropZone = document.getElementById('dropZone');
+  const input = document.getElementById('imageInput');
+  const previewContainer = document.getElementById('preview-container');
+
+  // Prevent browser default behavior for dragging files
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  // Highlight drop zone when item is dragged over it
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
+  });
+
+  // Handle dropped files
+  dropZone.addEventListener('drop', (e) => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    input.files = files; // Assign files to the hidden input form
+    handleFiles(files);
+  });
+
+  // Handle clicked/selected files
+  input.addEventListener('change', function() {
+    handleFiles(this.files);
+  });
+
+  // Generate image thumbnails
+  function handleFiles(files) {
+    previewContainer.innerHTML = '';
+    Array.from(files).forEach(file => {
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.classList.add('preview-thumb');
+          previewContainer.appendChild(img);
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+</script>
+
+      <button >Submit Report</button>
 
 
     </form>

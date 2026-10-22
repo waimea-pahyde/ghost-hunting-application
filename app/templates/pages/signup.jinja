@@ -6,31 +6,25 @@
 
 
 {% block content %}
-
+<h1>Signup</h1>
+<section class="form-sec">
     <form method="post" action="/signup">
 
-    <label>
-      First name
-      <input type="text" name="forename" required>
-      </label>
+      <input type="text" name="forename" placeholder="First Name"required>
 
-      <label>
-      last name
-      <input type="text" name="surname" required>
-      </label>
-            
-      <label>
-      Username
-      <input type="text" name="username" required>
-      </label>
-            
-      <label>
-      password
-      <input type="password" name="password" required>
-      </label>
+
+     
+      <input type="text" name="surname" placeholder="Last Name"required>
+      
+      <input type="text" name="username" placeholder="Username" required>
+
+      <input type="password" name="password" placeholder="password" required>
 
       <button >Submit</button>
     </form>
 
+
+    <p>Or, <a href="/login_page">Login</a></p>
+</section>
 {% endblock %}
 

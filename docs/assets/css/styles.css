@@ -2,6 +2,9 @@
 
 body {
     --pico-h2-color:               var(--pico-primary);
+
+
+    --pico-h2-color:               var(--pico-primary);
     --pico-h3-color:               var(--pico-secondary-hover);
     --pico-h4-color:               var(--pico-muted-color);
 

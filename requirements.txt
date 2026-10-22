@@ -3,4 +3,4 @@ python-dotenv      # Load environment variables from .env files
 arrow              # Better date and time handling
 rich               # Terminal formatting, logging, and tracebacks
 requests        # API requests
-
+flask_login
