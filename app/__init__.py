@@ -86,14 +86,14 @@ def show_login():
 
 @app.post("/login")
 def login_user():
-    username = request.form.get('username', '').strip()
+    username = request.form.get('username', '').strip().lower()
     password = request.form.get('password', '').strip()
 
     with connect_db() as db:
         sql = """
             SELECT id, forename, surname, passwordHash
             FROM user
-            WHERE username=?
+            WHERE LOWER(username) = ?
         """
         params = (username,)
         user = db.execute(sql, params).fetchone()
@@ -127,7 +127,7 @@ def show_signup():
 def add_user():
     forename = request.form.get('forename', '').strip()
     surname  = request.form.get('surname',  '').strip()
-    username = request.form.get('username', '').strip().lower()
+    username = request.form.get('username', '').strip()
     password = request.form.get('password', '').strip()
 
 

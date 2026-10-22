@@ -1,5 +1,10 @@
 # Sprint 4 - Developing a Refined and Complete System
 
+<!-- move myhunts to the top
+Fix the if the user isn't part of the hunts thing
+Remove join hunt button if you're already in the damn hunt
+ -->
+
 
 ## Sprint Goals
 
@@ -7,16 +12,15 @@ Develop the system until it is fully featured, with a refined UI and it satisfie
 
 ### Specific Goals
 
-**Edit these goals as needed**
 
 - Refine the design and UI of the website
 - Refine the user experience (UX) of the system
 - Perform final, full-system testing
 
 
-## Testing FEATURE NAME HERE
+## Testing reporting ghosts with my end users. 
 
-Replace this text with notes about what you are testing, how you tested it, and the outcome of the testing
+Testing reporting ghost sightings with my end users.  tested it, and the outcome of the testing
 
 **PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
 
@@ -29,9 +33,12 @@ Replace this text with notes any improvements you made as a result of the testin
 **PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
 
 
-## Testing FEATURE NAME HERE
+## Testing users can login
 
-Replace this text with notes about what you are testing, how you tested it, and the outcome of the testing
+End users noticed that usernames were always stored as lowercase, even if submitted with some uppercase letters. 
+This made logging in frustrating. 
+
+To combat this, I removed the force lowercase, and added a force lowercase to the check when logging in. This means that
 
 **PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
 
