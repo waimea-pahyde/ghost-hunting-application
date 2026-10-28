@@ -38,7 +38,7 @@
       {% endif %}
       
       
-      {% if session.logged_in  %}
+      {% if session.logged_in and not signed_up %}
         <form method="post" action="/join_hunt/{{ hunt.hunt_id }}">
           <button>Join Hunt</button>
         </form>

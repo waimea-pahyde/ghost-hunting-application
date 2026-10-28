@@ -368,6 +368,8 @@ advanced programming techniques such as 'left'; and the infamous continuation 'r
     margin: 0.5rem;
   }
 
+  /* I spent six hours straight doing this css. Reading my comments back now I worry slightly for my mental sanity.  */
+
   button {
     font-size: large;
     padding-left: 2rem;
@@ -593,8 +595,11 @@ margin-bottom: 2rem;
   }
 
   #profile-pic {
-    border-radius: 100%;
-    max-width:20% ;
+    border-radius: 50%;
+    object-fit: cover;
+    width: 200px;
+    height: 200px;
+
     border: 5px solid var(--accent-col);
   }
 
@@ -607,7 +612,15 @@ margin-bottom: 2rem;
     color: var(--text-col);
     border-radius: 2rem;
     padding: 1rem;
-    margin: 1rem;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    
+    strong {
+      font-size: large;
+    }
+
+
 
     a {
       color: var(--link-col);

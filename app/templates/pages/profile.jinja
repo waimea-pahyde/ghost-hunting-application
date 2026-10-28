@@ -10,6 +10,7 @@
 <div class="profile">
 <img src="/static/uploads/{{ user.profile_picture }}" id="profile-pic">
 <h1>{{user.forename}} {{user.surname}}</h1>
+<strong>@{{user.username}}</strong>
 {% if user.bio == None%}
 <p>This user has not set a bio yet!</p>
 {%else%}

@@ -330,10 +330,10 @@ def view_hunt(id):
 
 
         sql = """
-            SELECT  * FROM participant WHERE participant.ghostHunterID=?
+            SELECT  * FROM participant WHERE participant.ghostHunterID=? AND participant.huntID=?
         """
-        params = (session["user"]["id"],)
-        signed_up = db.execute(sql, params).fetchall()
+        params = (session["user"]["id"], id)
+        signed_up = db.execute(sql, params).fetchone()
 
 
         # Selecting the whole time, not formatting it to put in the javascript countdown. 
@@ -517,9 +517,26 @@ def submit_profile_edit():
      bio  = request.form.get('bio',  '').strip()
      profile_image = request.files.get('image_file', None)
      
+     if not profile_image and bio != None:
+        with connect_db() as db:
+           sql = """
+            UPDATE user 
+            SET bio=?
+            WHERE id=?
+            """
+           params = (bio, id)
+           db.execute(sql, params)
+           flash("Profile updated", "success")
+           return redirect(f"/profile/{id}")
+            
+
+
      if not profile_image or profile_image.filename == '':
         flash("There was a problem uploading the image", "error")
         return redirect("/")
+     
+     
+     
     
     # Sanitise filename and make it unique
      filename = secure_filename(profile_image.filename)
