@@ -130,25 +130,5 @@ New system:
 ![Profile edits submit despite no profile picture submitted. ](screenshots/editing_our_profile_after.gif)
 
 
-
-
-## Testing reporting ghosts with my end users. 
-
-Testing reporting ghost sightings with my end users.  tested it, and the outcome of the testing
-
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE TESTING HERE**
-
-![Placeholder](screenshots/placeholder.png)
-
-### Changes / Improvements
-
-Replace this text with notes any improvements you made as a result of the testing.
-
-**PLACE SCREENSHOTS AND/OR ANIMATED GIFS OF THE IMPROVED SYSTEM HERE**
-
-
-
 ## Sprint Review
-
-Replace this text with a statement about how the sprint has moved the project forward - key success point, any things that didn't go so well, etc.
-
+This sprint went really well. My end users were very happy with the app, and provided excellent feedback to help improve it in places where it was lacking. 

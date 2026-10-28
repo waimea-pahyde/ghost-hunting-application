@@ -23,7 +23,7 @@ I will make a website which displays reports of ghost sightings to ghost hunters
 Considering accessability means considering that the website will be available and accessible to all people who may want to use the system.  
 
 ### Relevance to the System
-
+ 
 My website may be used by people with vision problems who may need screen readers.
 
 ### Impact / Considerations

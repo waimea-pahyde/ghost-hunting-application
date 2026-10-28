@@ -89,6 +89,13 @@ h2 {
   
 }
 
+.nav-item-selected{
+  padding: 1rem;
+  filter: invert(6%) sepia(40%) saturate(7384%) hue-rotate(329deg) brightness(101%) contrast(94%);
+  
+}
+
+
 .nav-img{
   max-width: 2rem;
 }
