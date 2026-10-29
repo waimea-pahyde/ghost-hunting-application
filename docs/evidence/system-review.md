@@ -39,23 +39,20 @@ I made sure that all access to hunts were available from the home screen. Then, 
 ![Floating bottom bar](screenshots/floating_bottom_bar.png)
 
 
-I made the navigation bar icons, rather than links, as it's more modern, takes up less space on the ui, and by using SVGs can be used to highlight the page the user is on. 
+I made the navigation bar icons, rather than links as it's more modern, and takes up less space on the ui. I made these icons SVG files, so they can be tinted to further highlight to my users which page they"re on
 
-### NAME OF IMPLICATION 4
+### Functionality
 
-Replace this text with notes about what you did during the project to address the implication - design features, etc.
+I have tested my website thoroughly, as documented throughout this project. I have let my end users test it, and they have not found any major issues. For minor issues (i.e spelling), I have fixed immediately. 
 
 
-### NAME OF IMPLICATION 5
+### Aesthetics
 
-Replace this text with notes about what you did during the project to address the implication - design features, etc.
+I have tested multiple colour schemes, taken inspiration from other popular and modern websites for my design, and chosen a style that reflects a paranormal and spooky colourscheme. My end users were happy with this scheme, layout, and theme. 
 
 
 ## Overall Review
 
-Replace these words with a brief review of how the project went in terms of:
-- What went well?
-- What didn't go so well?
-- How did the testing/trialling impact the final system?
-- What would you do differently if you could?
-
+The project went well. End users were helpful, and using their feedback I refined multiple parts of the website.
+It was helpful to have their feedback on the colourscheme & layout of the website, as they know the needs of local ghosthunters better than I do. 
+If doing this project again, I would allocate more time into doing documentation, and working on spelling errors. 

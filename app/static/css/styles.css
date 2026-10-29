@@ -69,7 +69,7 @@ h2 {
   padding: 1rem   ;
 }
 
-#bottom-bar {
+#bottom-bar, #bottom-bar-hidden {
   position:fixed;
   bottom: 3%;
 
@@ -84,15 +84,28 @@ h2 {
 
 }
 
+#bottom-bar-hidden {
+  visibility: hidden;
+  .nav-img {
+    visibility: visible;
+  }
+}
+
+
 .nav-item{
   padding: 1rem;
   
 }
 
-.nav-item-selected{
+.nav-item-selected,  #pen-item-selected{
   padding: 1rem;
   filter: invert(6%) sepia(40%) saturate(7384%) hue-rotate(329deg) brightness(101%) contrast(94%);
   
+}
+
+#pen-item-selected{
+  filter: invert(6%) sepia(40%) saturate(7384%) hue-rotate(329deg) brightness(60%) contrast(94%);
+
 }
 
 

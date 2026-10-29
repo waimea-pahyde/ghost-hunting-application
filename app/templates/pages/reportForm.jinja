@@ -5,6 +5,17 @@
 {% extends 'pages/_base.jinja' %}
 
 {% block content %}
+{% if session.logged_in %}
+  <nav id="bottom-bar-hidden">
+  {%set user_id = session["user"]["id"]%}
+    <a href="/profile/{{user_id}}" class="nav-item"><img src="/static/images/profile.svg" alt="My profile" class="nav-img"></a>
+        <a href="/" class="nav-item"><img src="/static/images/home4.svg" alt="Home" class="nav-img"></a>
+    <a href="/report_ghost" id="pen-item-selected"><img src="/static/images/write.svg" alt="Report Ghost" class="nav-img"></a>
+</nav>
+{% endif %}  
+
+
+
 <script>
 const autofillElement = new MapboxAddressAutofill();
 autofillElement.accessToken = 'pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ';
