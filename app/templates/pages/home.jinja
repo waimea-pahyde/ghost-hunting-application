@@ -8,11 +8,13 @@
 {% block content %}
 
 {% if session.logged_in %}
+
+{# Bottom bar with identical styling to the non hidden, but with one SVG red now. #}
   <nav id="bottom-bar-hidden">
   {%set user_id = session["user"]["id"]%}
     <a href="/profile/{{user_id}}" class="nav-item"><img src="/static/images/profile.svg" alt="My profile" class="nav-img"></a>
         <a href="/" class="nav-item-selected"><img src="/static/images/home4.svg" alt="Home" class="nav-img"></a>
-    <a href="/report_ghost" class="nav-item"><img src="/static/images/write.svg" alt="Report Ghost" class="nav-img"></a>
+    <a href="/hunt/report" class="nav-item"><img src="/static/images/write.svg" alt="Report Ghost" class="nav-img"></a>
 </nav>
 {% endif %}  
 
@@ -24,7 +26,7 @@
 
 
     <div id="map"></div>
-    
+    {# Script for the map #}
     <script>
     var map = L.map('map').setView([0, 0], 2); 
 
@@ -33,7 +35,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
     
 
-
+  {# Adding a marker for all the hunts #}
     {% for hunt in hunts %}
     marker = L.marker([{{hunt.lat}}, {{hunt.lon}}]).addTo(map);        
     marker.bindTooltip("{{hunt.location}}", {
@@ -42,12 +44,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 });
   
     {%endfor%}
-    
-    
-    
     </script>
-
-  
   <br>
 
   {% if not session.logged_in %}
@@ -55,7 +52,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   <h3> Signup to participate in ghost hunts. <br>Or, report a ghost anonomously. </h3>
   <br>
 
-    <a href="/report_ghost" class="link-pretending-to-be-button">Report a ghost sihting!</a>
+    <a href="/hunt/report" class="link-pretending-to-be-button">Report a ghost sighting!</a>
     <a href="/login_page" class="link-pretending-to-be-button">Login</a>
     <a href="/signup_page"class="link-pretending-to-be-button">Sign-Up</a>
 </section>
@@ -71,7 +68,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     {%for hunt in my_hunts %}
       {% if hunt.status != 'Report Submitted'%}
         
-      <a href="/view_hunt/{{hunt.id}}" class="hunt">{{hunt.location}}</a>
+      <a href="/hunt/{{hunt.id}}" class="hunt">{{hunt.location}}</a>
          <p> Hunt status: {{hunt.status}}</p>
           <br>
       {%endif%}
@@ -90,7 +87,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     <h2>All hunts available: </h2>
     {%for hunt in hunts %}
     <br>
-   <a href="/view_hunt/{{hunt.id}}" class="hunt">{{hunt.location}}</a>
+   <a href="/hunt/{{hunt.id}}" class="hunt">{{hunt.location}}</a>
    <p> Hunt status: {{hunt.status}}</p>
     {%endfor%}
 </section>

@@ -28,19 +28,24 @@ app = Flask(__name__)
 # ----------------------------#
 @app.get("/")
 def show_home():
-
     with connect_db() as db:
+            # -------------------------------------------------------
+            # Retrieving all hunts from the database to display
             sql = """
             SELECT * FROM reported_hunt
             ORDER BY reported_hunt.date_reported DESC 
 
             """
-              # LEFT JOIN user ON reported_hunt.reported_by = user.id
             hunts = db.execute(sql).fetchall()
 
+            
+            # -------------------------------------------------------
+            # Checking if the user has any hunts, to display 
+            # 'my hunts' section on page.
+            
             my_hunts = None
             
-            if session.get("user") and session.get("logged_in"):
+            if session.get("user") and session.get("logged_in"): #Checking if there is a user and if it's logged in 
                 sql = """
                 SELECT *
                 FROM participant 
@@ -50,17 +55,20 @@ def show_home():
                 params = [session["user"]["id"]]
                 my_hunts = db.execute(sql, params).fetchall()
 
-                for hunt in hunts:
-                    if hunt["lat"] == None:
-                        print("Look at me I'm running!")
-                        address = hunt['location']
-                        address = quote(address)
-                        osm_api_url = f"https://nominatim.openstreetmap.org/search?q=${address}&format=json"
-                        print(osm_api_url)
-                        headers = { 'User-Agent': 'GhostHunters/1.0 (polly@ghosts.boo)'}
-                        response = requests.get(osm_api_url, headers=headers)
-                        data = response.json()
-                        try:
+            # -------------------------------------------------------
+            # Going through all the hunts and setting a lon & a 
+            # lat, to display  on the map. 
+            
+            for hunt in hunts:
+                if hunt["lat"] == None:
+                    address = hunt['location'] # Get an address, feed it into the openstreetmap API, return a json
+                    address = quote(address)
+                    osm_api_url = f"https://nominatim.openstreetmap.org/search?q=${address}&format=json"
+                    headers = { 'User-Agent': 'GhostHunters/1.0 (polly@ghosts.boo)'}
+                    response = requests.get(osm_api_url, headers=headers)
+                    data = response.json()
+                    try: # Mapbox API can be funny with certain addresses, + currently no prevention for manual address input. 
+                            # Check if an address actually returned nicely. 
                             place = data[0]
                             lat = place["lat"]
                             lon = place["lon"]
@@ -71,13 +79,10 @@ def show_home():
                     """,
                        (lat, lon, hunt["id"]))
                         
-                        except:
+                    except:
                             continue
                     else:
-                        continue
-
-                
-                    
+                        continue    
             return render_template("pages/home.jinja", hunts=hunts, my_hunts=my_hunts)
 
 
@@ -167,18 +172,25 @@ def add_user():
         return redirect("/login_page")
 
 
-@app.get("/report_ghost")
+# ----------------------------#
+#   Ghost Reporting Page    #
+# ----------------------------# 
+@app.get("/hunt/report")
 def report_ghost():
     return render_template("pages/report_form.jinja")
 
-# joining hunt - id given being the hunt id
-@app.post("/join_hunt/<int:id>")
+
+
+# ----------------------------#
+#           Joining a hunt       #
+# ----------------------------# 
+@app.post("/hunt/<int:id>/join")
 @login_required
 def join_hunt(id):
 
-# rip out the check if user exists from the signup table and put it here. 
+    # -------------------------------------------------------
+    # Checking if the user is already signed up
     with connect_db() as db:
-        # Show if there's a row where the hunt id = the id given AND ghost hunter id = the id
         sql = "SELECT * FROM participant WHERE ghost_hunter_ID=? AND huntID=?"
         params = [session["user"]["id"],id]
         signed_up = db.execute(sql, params).fetchone()
@@ -187,11 +199,13 @@ def join_hunt(id):
             flash("You have already signed up for this hunt!", "error")
             return redirect("/")
         
+        # -------------------------------------------------------
+        # Checking if there's any users under this hunt
         sql = "SELECT ghost_hunter_ID  FROM participant WHERE huntID=?"
         params = [id]
         leader = db.execute(sql, params).fetchall()
         
-        if not leader:
+        if not leader: # If none, set the current user to the leader. 
             sql = """
             UPDATE reported_hunt 
             SET (hunt_leader)=?
@@ -200,7 +214,8 @@ def join_hunt(id):
             params = (session["user"]["id"], id)
             db.execute(sql, params)
 
-        
+        # -------------------------------------------------------
+        # Add the user into the hunt
         sql = """
             INSERT INTO participant (huntID, ghost_hunter_ID )
             VALUES (?, ?)
@@ -211,18 +226,24 @@ def join_hunt(id):
         flash("You have signed up for this hunt.")
         return redirect("/")
 
-#update the date of hunt in the database.
-@app.post("/set_date/<int:id>")
+
+# ----------------------------#
+#      Updating hunt date    #
+# ----------------------------# 
+@app.post("/hunt/<int:id>/set-date")
 @login_required
 def set_date(id):
+    # -------------------------------------------------------
+    # Get the raw date from the form on the hunt page
     raw = request.form.get("date_of_hunt", "").strip()
-    try:
+    
+    try: #turning it into UTC
         dt = datetime.fromisoformat(raw.replace("Z", "+00:00")).astimezone(timezone.utc)
     except ValueError:
         flash("Invalid date.", "error")
         return redirect("/")
 
-    with connect_db() as db:
+    with connect_db() as db: 
         db.execute(
             "UPDATE reported_hunt SET date_of_hunt = ? WHERE id = ?",
             (dt.isoformat(), id),
@@ -232,8 +253,10 @@ def set_date(id):
 
 
 
-# Send the hunt report
-@app.post("/send_report/<int:id>")
+# ---------------------------------------#
+# Sending After-Hunt Report Route #
+# ---------------------------------------# 
+@app.post("/hunt/<int:id>/send-report")
 @login_required
 def send_report(id):
     description = request.form.get("description", "").strip()
@@ -241,6 +264,10 @@ def send_report(id):
     images = request.files.getlist("images")
 
     with connect_db() as db:
+        # -------------------------------------------------------
+        # Get everything from the form on the hunt page,
+        # Set status to 'Report Submitted'
+        
         db.execute(
             """
             UPDATE reported_hunt
@@ -259,6 +286,7 @@ def send_report(id):
             unique_filename = f"{uuid.uuid4().hex[:12]}_{filename}"
             img.save(os.path.join(UPLOAD_FOLDER, unique_filename))
 
+            
             db.execute(
                 "INSERT INTO image (hunt, image, before_hunt) VALUES (?, ?, ?)",
                 (id, unique_filename, 0),
@@ -267,6 +295,10 @@ def send_report(id):
     flash("Report Sent!", "success")
     return redirect("/")
 
+
+# ----------------------------#
+#     Ending Hunt Route      #
+# ----------------------------# 
 @app.post("/hunt/<int:id>/end")
 @login_required
 def end_hunt(id):
@@ -282,10 +314,14 @@ def end_hunt(id):
         flash("Hunt ended", "success")
     return redirect(f"/view_hunt/{id}")
 
-#view specific hunt
-@app.get("/view_hunt/<int:id>")
+# -----------------------------#
+#              Hunt Page           #
+# ----------------------------# 
+@app.get("/hunt/<int:id>")
 @login_required
 def view_hunt(id):
+        # -------------------------------------------------------
+        # Get every bit of information about the hunt
     with connect_db() as db:
         sql = """
             SELECT 
@@ -304,6 +340,8 @@ def view_hunt(id):
         params = (id,)
         hunt = db.execute(sql, params).fetchone()
 
+        # -------------------------------------------------------
+        # Get all associated images
         sql = """
             SELECT  * FROM image
             WHERE hunt=?
@@ -311,8 +349,12 @@ def view_hunt(id):
         params = (id,)
         photos = db.execute(sql, params).fetchall()
 
-
+        
+        # -------------------------------------------------------
+        # Getting the date of the hunt and changing the status
+        
         user_id = session["user"]["id"]
+        # *re*get the date, this time feeding it through DATE()
         sql = "SELECT DATE(date_of_hunt) AS date_of_hunt FROM reported_hunt WHERE id=?"
         params = (id,)
         row = db.execute(sql, params).fetchone()
@@ -320,11 +362,13 @@ def view_hunt(id):
         todays_date = date.today()
 
         row = db.execute("SELECT date_of_hunt, status FROM reported_hunt WHERE id = ?", (id,)).fetchone()
-
+        
+        # If it's been set, and the status hasn't *already* changed, check if the date is todays date. 
         if row["date_of_hunt"] and row["status"] == "open":
             hunt_dt = datetime.fromisoformat(row["date_of_hunt"])
-            if datetime.now(timezone.utc) >= hunt_dt:
-                print("THIS IS TRUE")     
+            
+            # If it is, set the hunt status to 'hunting'
+            if datetime.now(timezone.utc) >= hunt_dt: 
                 sql = """
             UPDATE reported_hunt 
             SET status= "hunting" 
@@ -333,7 +377,8 @@ def view_hunt(id):
                 params = (id,)
                 db.execute(sql, params)
 
-        # Hunting
+        # -------------------------------------------------------
+        # Getting a list of participants for this hunt
         sql = """
             SELECT  * FROM participant
             JOIN user AS hunters ON participant.ghost_hunter_ID = hunters.id 
@@ -342,7 +387,8 @@ def view_hunt(id):
         params = [id]
         participants = db.execute(sql, params).fetchall()
 
-
+        # -------------------------------------------------------
+        # Checking if the user has already signed up for this hunt
         sql = """
             SELECT  * FROM participant WHERE participant.ghost_hunter_ID=? AND participant.huntID=?
         """
@@ -350,38 +396,17 @@ def view_hunt(id):
         signed_up = db.execute(sql, params).fetchone()
 
 
-        # Selecting the whole time, not formatting it to put in the javascript countdown. 
+        # -------------------------------------------------------
+        # Getting the date for the last time now, 
+        # this time not formatting it
+
         sql = "SELECT date_of_hunt AS time_of_hunt FROM reported_hunt WHERE id=?"
         params = [id,]
         row = db.execute(sql, params).fetchone()
         hunt_time = row['time_of_hunt']
 
-        print("----------------------------------------------")
-        address = hunt['location']
-        print(address)
-        address = quote(address)
-        print(address)
-        osm_api_url = f"https://nominatim.openstreetmap.org/search?q=${address}&format=json"
-        print(osm_api_url)
-        headers = { 'User-Agent': 'GhostHunters/1.0 (polly@ghosts.boo)'}
-        response = requests.get(osm_api_url, headers=headers)
-        print(response)
-        data = response.json()
-        print(data)
-        print(len(data))
-        
-        try:
-            place = data[0]
-            lat = place["lat"]
-            lon = place["lon"]
-        except: 
-            flash("No location found for this address! If this is your hunt, try a different address!", "error")
-            return redirect("/")
-
-
-        # Hunting in hunt: 
-        #  if their username is in the list of participating users then set it to true. else set it to false
-
+        # -------------------------------------------------------
+        # Getting all the messages
         sql = """
                 SELECT  * FROM message
                 JOIN user AS hunters ON message.sender = hunters.id 
@@ -400,15 +425,19 @@ def view_hunt(id):
                             todays_date=todays_date, 
                             participants=participants, 
                             hunt_time=hunt_time,
-                            lat=lat,
-                            lon=lon,
                             messages=message,
                             signed_up=signed_up,
                             photos=photos)
     
+
+# ----------------------------#
+#     Getting messages        #
+# ----------------------------# 
 @app.get("/messages/<int:hunt_id>/")
 @login_required
 def get_messages(hunt_id):
+    
+    # Get all the messages and feed them into a json
     after = request.args.get("after", 0, type=int)
     with connect_db() as db:
         rows = db.execute("""
@@ -420,7 +449,9 @@ def get_messages(hunt_id):
         """, (hunt_id, after)).fetchall()
     return jsonify([dict(r) for r in rows])
 
-
+# ----------------------------#
+#     Logout User                #
+# ----------------------------# 
 @app.get("/logout")
 @login_required
 def logout_admin():
@@ -428,8 +459,10 @@ def logout_admin():
     flash(f"You have been logged out", "success")
     return redirect("/")    
 
-@app.post("/sendReport")
-
+# -----------------------------#
+# Send Ghost Report Route #
+# -----------------------------# 
+@app.post("/hunt/report/send")
 def add_hunt():
     description = request.form.get("description", "").strip()
     images = request.files.getlist("images")
@@ -437,15 +470,17 @@ def add_hunt():
     town = request.form.get("town", "").strip()
     country = request.form.get("country", "").strip()
 
-    
+    #-------------------------------------------------------------------
+    #Get all the parts, and chuck them together in a big long one
+    # That can then be fed into the osm api
     location = " ".join(part for part in (street, town, country) if part)
-    for i in range (50):
-        print(street)
     
+
     user_id = None
     if session.get("user") and session.get("logged_in"):
         user_id = session["user"]["id"]
 
+    # Set the cursor to the new hunt id
     with connect_db() as db:
         cursor = db.execute(
             "INSERT INTO reported_hunt (reported_by, location, details) VALUES (?, ?, ?)",
@@ -453,6 +488,7 @@ def add_hunt():
         )
         hunt_id = cursor.lastrowid
 
+        # Get all the images sent in
         for img in images:
 
             if not img or img.filename == "":
@@ -470,7 +506,9 @@ def add_hunt():
     flash("report sent!", "success")
     return redirect("/")
 
-
+# ----------------------------#
+#     Send Message Route   #
+# ----------------------------# 
 @app.post("/message/<int:id>/")
 @login_required
 def add_message(id):
@@ -486,6 +524,10 @@ def add_message(id):
         )
     return jsonify(ok=True)
 
+
+# ----------------------------#
+#           Profile Page           #
+# ----------------------------# 
 @app.get("/profile/<int:id>")
 @login_required
 def see_profile(id):
@@ -518,12 +560,17 @@ def see_profile(id):
 
             return render_template("pages/profile.jinja", user=user, previous_hunts=previous_hunts, reported_hunts=reported_hunts)
      
-
+# ----------------------------#
+#     Edit Profile Page         #
+# ----------------------------# 
 @app.get("/profile/<int:id>/edit")
 @login_required
 def edit_profile(id):
     return render_template("pages/profile_edit.jinja")
 
+# ----------------------------#
+#     Edit profile route        #
+# ----------------------------# 
 @app.post("/edit_profile")
 @login_required
 def submit_profile_edit():
@@ -531,6 +578,7 @@ def submit_profile_edit():
      bio  = request.form.get('bio',  '').strip()
      profile_image = request.files.get('image_file', None)
      
+    #  When they edit their bio and don't change the image
      if not profile_image and bio != None:
         with connect_db() as db:
            sql = """
@@ -575,7 +623,9 @@ def submit_profile_edit():
            flash("Profile updated", "success")
            return redirect(f"/profile/{id}")
      
-
+# ----------------------------#
+#     Delete profile route    #
+# ----------------------------# 
 @app.get("/delete_profile")
 @login_required
 def delete_profile():

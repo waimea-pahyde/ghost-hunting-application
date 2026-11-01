@@ -1,13 +1,17 @@
-{# hunt page #}
+
 {% extends "pages/_base.jinja" %}
 {% block content %}
+  
+  {# Status 1: Right after the hunt has been reported, it is Open #}
   {% if hunt.status == "open" %}
     <h1>Hunt at {{ hunt.location }}</h1>
     <h3>{{ hunt.lon }},{{ hunt.lat }}</h3>
+
     <section id="info">
       <h2>Hunt information Given:</h2>
       <p><em>"{{ hunt.details }}"</em> </p>
     </section>
+
     {% if photos %}
       <h2>Submitted photos:</h2>
       <section id="sec-images">
@@ -21,6 +25,7 @@
         {% endfor %}
       </section>
     {% endif %}
+
     <div class="div-info">
       <p><strong>Current status: </strong>{{ hunt.status }}</p>
       {% if hunt.reported_by == none %}
@@ -30,6 +35,8 @@
       {% endif %}
       <p><strong>Hunt reported on: </strong>{{ hunt.date_reported }} </p>
     </div>
+
+
     <div class="div-info">
       {% if hunt.leader_username == None %}
         <p>There is no hunt leader. Be the first to 'Join Hunt' and be the leader of this hunt!</p>
@@ -37,16 +44,17 @@
         <p><strong>Hunt leader is:</strong> <a href="/profile/{{ hunt.leader_id }}">{{ hunt.leader_username }}</a></p>
       {% endif %}
       
-      
       {% if session.logged_in and not signed_up %}
-        <form method="post" action="/join_hunt/{{ hunt.hunt_id }}">
+        <form method="post" action="/hunt/{{ hunt.hunt_id }}/join">
           <button>Join Hunt</button>
         </form>
       {% endif %}
+
+
       {#As days go by I find myself more wishful for the when statement. #}
       {% if user_id == hunt.hunt_leader and hunt.date_of_hunt is none %}
         <section class="main-sec">
-        <form method="post" action="/set_date/{{ hunt.hunt_id }}" id="dateForm">
+        <form method="post" action="/hunt/{{ hunt.hunt_id }}/set-date" id="dateForm">
           <label>
             Pick a date for the hunt!
             <input type="datetime-local" id="local_date" required>
@@ -54,13 +62,15 @@
           <input type="hidden" name="date_of_hunt" id="date_of_hunt">
           <button>Submit date</button>
         </form>
-        <script>
+        {# Script to make sure date is in UTC. Thanks docker.  #}
+        <script> 
     document.getElementById("dateForm").addEventListener("submit", () => {
       const local = document.getElementById("local_date").value;
       document.getElementById("date_of_hunt").value = new Date(local).toISOString();
     });
         </script>
         </section>
+      
       {% elif user_id != hunt.hunt_leader %}
         <p>Only the leader can pick a day for this hunt!</p>
       {% else %}
@@ -115,7 +125,7 @@
       {% endfor %}
       {% if not signed_up %}
         <div id="center-me">
-          <form method="post" action="/join_hunt/{{ hunt.hunt_id }}">
+          <form method="post" action="/hunt/{{ hunt.hunt_id }}/join">
             <button>Join Hunt</button>
           </form>
         </div>
@@ -126,13 +136,13 @@
     {% set location = hunt.location %}
     <script>
   var map = L.map('map').setView([0, 0], 2);
-  map.setView([{{ lat }}, {{ lon }}], 13);
+  map.setView([{{ hunt.lat }}, {{ hunt.lon }}], 13);
 
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
-  marker = L.marker([{{ lat }}, {{ lon }}]).addTo(map);
+  marker = L.marker([{{ hunt.lat }}, {{ hunt.lon }}]).addTo(map);
 
     </script>
     {% if signed_up %}
@@ -223,8 +233,8 @@
     {% if user_id == hunt.hunt_leader %}
       <h2>Hunt Report</h2>
       <section class="form-sec">
-        <form method="post"hjhjhj
-              action="/send_report/{{ hunt.hunt_id }}"
+        <form method="post"
+              action="/hunt/{{ hunt.hunt_id }}/send-report"
               enctype="multipart/form-data">
           <textarea type="text"
                     name="description"
