@@ -23,12 +23,12 @@
     {% endif %}
     <div class="div-info">
       <p><strong>Current status: </strong>{{ hunt.status }}</p>
-      {% if hunt.reportedBy == none %}
+      {% if hunt.reported_by == none %}
         <p><strong>Reported by: </strong>Anonomous</p>
       {% else %}
         <p><strong>Reported by: </strong><a href="/profile/{{ hunt.reporter_id }}">{{ hunt.reporter_username }}</a></p>
       {% endif %}
-      <p><strong>Hunt reported on: </strong>{{ hunt.dateReported }} </p>
+      <p><strong>Hunt reported on: </strong>{{ hunt.date_reported }} </p>
     </div>
     <div class="div-info">
       {% if hunt.leader_username == None %}
@@ -44,7 +44,7 @@
         </form>
       {% endif %}
       {#As days go by I find myself more wishful for the when statement. #}
-      {% if user_id == hunt.huntLeader and hunt.date_of_hunt is none %}
+      {% if user_id == hunt.hunt_leader and hunt.date_of_hunt is none %}
         <section class="main-sec">
         <form method="post" action="/set_date/{{ hunt.hunt_id }}" id="dateForm">
           <label>
@@ -61,7 +61,7 @@
     });
         </script>
         </section>
-      {% elif user_id != hunt.huntLeader %}
+      {% elif user_id != hunt.hunt_leader %}
         <p>Only the leader can pick a day for this hunt!</p>
       {% else %}
         <p>
@@ -110,7 +110,7 @@
       {% for participant in participants %}
         <a href="/profile/{{ participant.id }}"> - {{ participant.forename }}
           {{ participant.surname }}
-          {% if participant.ghostHunterID == hunt.leader_id %}(Leader) {% endif %}</a>
+          {% if participant.ghost_hunter_ID == hunt.leader_id %}(Leader) {% endif %}</a>
         <br>
       {% endfor %}
       {% if not signed_up %}
@@ -206,13 +206,13 @@
       <h2>Hunt information Given:</h2>
       <p><em>"{{ hunt.details }}"</em> </p>
       <p><strong>Current status: </strong>{{ hunt.status }}</p>
-      {% if hunt.reportedBy == none %}
+      {% if hunt.reported_by == none %}
         <p><strong>Reported by: </strong>Anonomous</p>
       {% else %}
         <p><strong>Reported by: </strong><a href="/profile/{{ hunt.reporter_id }}">{{ hunt.reporter_username }}</a></p>
       {% endif %}
-      <p><strong>Hunt reported on: </strong>{{ hunt.dateReported }} </p>
-      {% if user_id == hunt.huntLeader %}
+      <p><strong>Hunt reported on: </strong>{{ hunt.date_reported }} </p>
+      {% if user_id == hunt.hunt_leader %}
         <p>Hunt finished?</p>
         <form action="/hunt/{{ hunt.hunt_id }}/end" method="post">
           <button type="submit">End Hunt</button>
@@ -220,7 +220,7 @@
       {% endif %}
     </div>
   {% elif hunt.status == "Hunt Ended" %}
-    {% if user_id == hunt.huntLeader %}
+    {% if user_id == hunt.hunt_leader %}
       <h2>Hunt Report</h2>
       <section class="form-sec">
         <form method="post"hjhjhj
@@ -329,12 +329,12 @@
     <div class="div-info">
     <h3>Original hunt details:</h3>
     <p><strong>Hunt Description: </strong><em>"{{ hunt.details }}"</em></p>
-          {% if hunt.reportedBy == none %}
+          {% if hunt.reported_by == none %}
         <p><strong>Reported by: </strong>Anonomous</p>
       {% else %}
         <p><strong>Reported by: </strong><a href="/profile/{{ hunt.reporter_id }}">{{ hunt.reporter_username }}</a></p>
       {% endif %}
-      <p><strong>Hunt reported on: </strong>{{ hunt.dateReported }} </p>
+      <p><strong>Hunt reported on: </strong>{{ hunt.date_reported }} </p>
 
     </div>
     {% if photos %}

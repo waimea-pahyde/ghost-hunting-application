@@ -65,10 +65,10 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
  
   <br>
-  {% if myHunts  %}
+  {% if my_hunts  %}
       <section id="hunt-section">
         <h2>My hunts:</h2>
-    {%for hunt in myHunts %}
+    {%for hunt in my_hunts %}
       {% if hunt.status != 'Report Submitted'%}
         
       <a href="/view_hunt/{{hunt.id}}" class="hunt">{{hunt.location}}</a>

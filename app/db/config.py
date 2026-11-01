@@ -25,16 +25,16 @@ class userTable:
             forename        TEXT NOT NULL,
             surname     TEXT NOT NULL,
             username        TEXT NOT NULL, 
-            reportedHunts   INT DEFAULT 0,
+            reported_hunts   INT DEFAULT 0,
             bio    TEXT,
             profile_picture TEXT DEFAULT "default.png",
-            passwordHash         TEXT NOT NULL,
+            password_hash         TEXT NOT NULL,
             created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """
 
     SEED_DATA = """
-        INSERT INTO user (forename, surname, username, reportedHunts, bio, passwordHash)
+        INSERT INTO user (forename, surname, username, reported_hunts, bio, password_hash)
         VALUES
             ("Sharon", "Paratrack", "sharontracksghosts", 4, "Hey! I'm Sharon Paratrack. A fun fact about me: I can smell ghosts!", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252"),
             ("Hugh", "Findghost", "hughfindsghosts", 2, "Hey! I'm Hugh Findghost. A fun fact about me: I know the best ghost locations!", "scrypt:32768:8:1$n7eJTucLbaGmUpAM$c1776374a8d456a6eaf61bccc08db5e1fcc4ff3b3983d364c45ab13074255eeae0a393afb11f99a9fe63fb1d980992ace17a72ba70324523b11e92e36cbe4252"),
@@ -53,7 +53,7 @@ class messagesTable:
         CREATE TABLE message (
             id      INTEGER PRIMARY KEY AUTOINCREMENT,
             sender     INTEGER NOT NULL REFERENCES user(id),
-            hunt        INTEGER NOT NULL REFERENCES reportedHunt(id),
+            hunt        INTEGER NOT NULL REFERENCES reported_hunt(id),
             body     TEXT NOT NULL,
             sent TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
@@ -67,19 +67,19 @@ class messagesTable:
            (3, 1, "But I met someones nice uncle :(" )
     """
 
-class reportedHuntTable: 
+class reported_huntTable: 
 
-    NAME = "reportedHunt"
+    NAME = "reported_hunt"
 
     SCHEMA = """
-        CREATE TABLE reportedHunt (
+        CREATE TABLE reported_hunt (
             id                                            INTEGER PRIMARY KEY AUTOINCREMENT ,
-            huntLeader                             ID REFERENCES user(id),
-            reportedBy                             ID REFERENCES user(id) ,
+            hunt_leader                             ID REFERENCES user(id),
+            reported_by                             ID REFERENCES user(id) ,
             details                                    TEXT NOT NULL, 
             description                             TEXT,
             recommended_next_action     TEXT,
-            dateReported                          TIMESTAMP DEFAULT (datetime('now','localtime')) NOT NULL,
+            date_reported                          TIMESTAMP DEFAULT (datetime('now','localtime')) NOT NULL,
             date_of_hunt                          TIMESTAMP,
             status                                      TEXT NOT NULL DEFAULT "open",
             location                                    TEXT NOT NULL,
@@ -91,7 +91,7 @@ class reportedHuntTable:
 
 
     SEED_DATA = """
-        INSERT INTO reportedHunt (reportedBy, details, location)
+        INSERT INTO reported_hunt (reported_by, details, location)
         VALUES
             (4, "I was sleeping, and then I saw my uncle, Dan Ghosthunter, standing in my window. My house is on the 2nd Floor, surrounded by trees, so it had to be a ghost 👻. Then, the next day, they found my dear Uncle Dan dead from head trauma after a significant fall outside my house. The ghost teleported him as punishment. And to think, he just got out of jail for stalking too. Poor Dan. He didn't deserve this.", "10 Ridgeview Court"),
             (2, "TEST DATA PLEASE IGNORE", "test")
@@ -104,13 +104,13 @@ class participantTable:
 
     SCHEMA = """
         CREATE TABLE participant (
-           ghostHunterID        INTEGER NOT NULL REFERENCES user(id),
-            huntID      INTEGER NOT NULL REFERENCES reportedHunt(id)
+           ghost_hunter_ID        INTEGER NOT NULL REFERENCES user(id),
+            huntID      INTEGER NOT NULL REFERENCES reported_hunt(id)
         )
     """
 
     SEED_DATA = """
-        INSERT INTO participant (ghostHunterID, huntID)
+        INSERT INTO participant (ghost_hunter_ID, huntID)
         VALUES
             (1,1),
             (2,1),
@@ -126,7 +126,7 @@ class imageTable:
     SCHEMA = """
         CREATE TABLE image (
             id      INTEGER PRIMARY KEY AUTOINCREMENT,
-            hunt        INTEGER NOT NULL REFERENCES reportedHunt(id),
+            hunt        INTEGER NOT NULL REFERENCES reported_hunt(id),
             image      TEXT NOT NULL,
             before_hunt BOOLEAN DEFAULT 0
         )
@@ -159,7 +159,7 @@ TABLES = [
     userTable,
     participantTable,
     messagesTable,
-    reportedHuntTable,
+    reported_huntTable,
     imageTable
 
     # Add more tables here...

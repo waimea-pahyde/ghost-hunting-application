@@ -1,6 +1,6 @@
 #================================================👻===========
-# PARATRA
-# By YOUR NAME HERE 👻
+# PARATRACK 
+# By Polly :D 👻
 #========👻===================================================
 
 from flask import Flask, request, session, render_template, flash, redirect, send_file, make_response, jsonify
@@ -23,30 +23,32 @@ UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
 # Create the app
 app = Flask(__name__)
 
-
+# ----------------------------#
+#           Home page            #
+# ----------------------------#
 @app.get("/")
 def show_home():
 
     with connect_db() as db:
             sql = """
-            SELECT * FROM reportedHunt
-            ORDER BY reportedHunt.dateReported DESC 
+            SELECT * FROM reported_hunt
+            ORDER BY reported_hunt.date_reported DESC 
 
             """
-              # LEFT JOIN user ON reportedHunt.reportedBy = user.id
+              # LEFT JOIN user ON reported_hunt.reported_by = user.id
             hunts = db.execute(sql).fetchall()
 
-            myHunts = None
+            my_hunts = None
             
             if session.get("user") and session.get("logged_in"):
                 sql = """
                 SELECT *
                 FROM participant 
-                JOIN reportedHunt ON participant.huntID = reportedHunt.id
-                WHERE participant.ghostHunterID = ? 
+                JOIN reported_hunt ON participant.huntID = reported_hunt.id
+                WHERE participant.ghost_hunter_ID = ? 
                 """
                 params = [session["user"]["id"]]
-                myHunts = db.execute(sql, params).fetchall()
+                my_hunts = db.execute(sql, params).fetchall()
 
                 for hunt in hunts:
                     if hunt["lat"] == None:
@@ -63,7 +65,7 @@ def show_home():
                             lat = place["lat"]
                             lon = place["lon"]
                             db.execute("""
-                        UPDATE reportedHunt
+                        UPDATE reported_hunt
                         SET lat=?, lon=?               
                         WHERE id=?
                     """,
@@ -76,14 +78,20 @@ def show_home():
 
                 
                     
-            return render_template("pages/home.jinja", hunts=hunts, myHunts=myHunts)
+            return render_template("pages/home.jinja", hunts=hunts, my_hunts=my_hunts)
 
 
+# ----------------------------#
+#           Login page             #
+# ----------------------------#
 @app.get("/login_page")
 def show_login():
     return render_template("pages/login.jinja")
 
 
+# ----------------------------#
+#           Login Route           #
+# ----------------------------#
 @app.post("/login")
 def login_user():
     username = request.form.get('username', '').strip().lower()
@@ -91,7 +99,7 @@ def login_user():
 
     with connect_db() as db:
         sql = """
-            SELECT id, forename, surname, passwordHash
+            SELECT id, forename, surname, password_hash
             FROM user
             WHERE LOWER(username) = ?
         """
@@ -102,7 +110,7 @@ def login_user():
             flash(f"Unknown user", "error")
             return redirect("/login_page")
 
-        if not check_password_hash(user["passwordHash"], password):
+        if not check_password_hash(user["password_hash"], password):
             flash(f"Incorrect password", "error")
             return redirect("/login_page")
 
@@ -116,13 +124,19 @@ def login_user():
 
         flash("Login successful", "success")
         return redirect("/")
-    
+
+
+# ----------------------------#
+#           Signup Page           #
+# ----------------------------# 
 @app.get("/signup_page")
 def show_signup():
     return render_template("pages/signup.jinja")
 
 
-# Signup 
+# ----------------------------#
+#           Signup Route         #
+# ----------------------------# 
 @app.post("/signup")
 def add_user():
     forename = request.form.get('forename', '').strip()
@@ -143,7 +157,7 @@ def add_user():
         pass_hash = generate_password_hash(password)
 
         sql = """
-            INSERT INTO user (forename, surname, username, passwordHash)
+            INSERT INTO user (forename, surname, username, password_hash)
             VALUES (?, ?, ?, ?)
         """
         params = (forename, surname, username, pass_hash)
@@ -152,10 +166,10 @@ def add_user():
         flash("Account created. Please login", "success")
         return redirect("/login_page")
 
-# rendering 
+
 @app.get("/report_ghost")
 def report_ghost():
-    return render_template("pages/reportForm.jinja")
+    return render_template("pages/report_form.jinja")
 
 # joining hunt - id given being the hunt id
 @app.post("/join_hunt/<int:id>")
@@ -165,22 +179,22 @@ def join_hunt(id):
 # rip out the check if user exists from the signup table and put it here. 
     with connect_db() as db:
         # Show if there's a row where the hunt id = the id given AND ghost hunter id = the id
-        sql = "SELECT * FROM participant WHERE ghostHunterID=? AND huntID=?"
+        sql = "SELECT * FROM participant WHERE ghost_hunter_ID=? AND huntID=?"
         params = [session["user"]["id"],id]
-        signedUp = db.execute(sql, params).fetchone()
+        signed_up = db.execute(sql, params).fetchone()
 
-        if  signedUp:
+        if  signed_up:
             flash("You have already signed up for this hunt!", "error")
             return redirect("/")
         
-        sql = "SELECT ghostHunterID  FROM participant WHERE huntID=?"
+        sql = "SELECT ghost_hunter_ID  FROM participant WHERE huntID=?"
         params = [id]
         leader = db.execute(sql, params).fetchall()
         
         if not leader:
             sql = """
-            UPDATE reportedHunt 
-            SET (huntLeader)=?
+            UPDATE reported_hunt 
+            SET (hunt_leader)=?
             WHERE id=?
             """
             params = (session["user"]["id"], id)
@@ -188,7 +202,7 @@ def join_hunt(id):
 
         
         sql = """
-            INSERT INTO participant (huntID, ghostHunterID )
+            INSERT INTO participant (huntID, ghost_hunter_ID )
             VALUES (?, ?)
         """
         params = (id, session["user"]["id"])
@@ -210,7 +224,7 @@ def set_date(id):
 
     with connect_db() as db:
         db.execute(
-            "UPDATE reportedHunt SET date_of_hunt = ? WHERE id = ?",
+            "UPDATE reported_hunt SET date_of_hunt = ? WHERE id = ?",
             (dt.isoformat(), id),
         )
     flash("Date set!", "success")
@@ -229,7 +243,7 @@ def send_report(id):
     with connect_db() as db:
         db.execute(
             """
-            UPDATE reportedHunt
+            UPDATE reported_hunt
             SET description = ?, recommended_next_action = ?, status = 'Report Submitted'
             WHERE id = ?
             """,
@@ -258,7 +272,7 @@ def send_report(id):
 def end_hunt(id):
     with connect_db() as db:
         sql = """
-        UPDATE reportedHunt 
+        UPDATE reported_hunt 
         SET status = "Hunt Ended"
         WHERE id =?
         """
@@ -275,16 +289,16 @@ def view_hunt(id):
     with connect_db() as db:
         sql = """
             SELECT 
-            reportedHunt.*, 
-            reportedHunt.id  AS hunt_id,
+            reported_hunt.*, 
+            reported_hunt.id  AS hunt_id,
             leader.username AS leader_username,
             reporter.username AS reporter_username,
             leader.id AS leader_id,
             reporter.id AS reporter_id
-            FROM reportedHunt
-            LEFT JOIN user AS reporter ON reportedHunt.reportedBy = reporter.id
-            LEFT JOIN user AS leader ON reportedHunt.huntLeader = leader.id
-            WHERE reportedHunt.id=?
+            FROM reported_hunt
+            LEFT JOIN user AS reporter ON reported_hunt.reported_by = reporter.id
+            LEFT JOIN user AS leader ON reported_hunt.hunt_leader = leader.id
+            WHERE reported_hunt.id=?
           
         """
         params = (id,)
@@ -299,20 +313,20 @@ def view_hunt(id):
 
 
         user_id = session["user"]["id"]
-        sql = "SELECT DATE(date_of_hunt) AS date_of_hunt FROM reportedHunt WHERE id=?"
+        sql = "SELECT DATE(date_of_hunt) AS date_of_hunt FROM reported_hunt WHERE id=?"
         params = (id,)
         row = db.execute(sql, params).fetchone()
         hunt_date = row['date_of_hunt']
         todays_date = date.today()
 
-        row = db.execute("SELECT date_of_hunt, status FROM reportedHunt WHERE id = ?", (id,)).fetchone()
+        row = db.execute("SELECT date_of_hunt, status FROM reported_hunt WHERE id = ?", (id,)).fetchone()
 
         if row["date_of_hunt"] and row["status"] == "open":
             hunt_dt = datetime.fromisoformat(row["date_of_hunt"])
             if datetime.now(timezone.utc) >= hunt_dt:
                 print("THIS IS TRUE")     
                 sql = """
-            UPDATE reportedHunt 
+            UPDATE reported_hunt 
             SET status= "hunting" 
             WHERE id = ?;
                     """
@@ -322,7 +336,7 @@ def view_hunt(id):
         # Hunting
         sql = """
             SELECT  * FROM participant
-            JOIN user AS hunters ON participant.ghostHunterID = hunters.id 
+            JOIN user AS hunters ON participant.ghost_hunter_ID = hunters.id 
             WHERE participant.huntID=?
         """
         params = [id]
@@ -330,14 +344,14 @@ def view_hunt(id):
 
 
         sql = """
-            SELECT  * FROM participant WHERE participant.ghostHunterID=? AND participant.huntID=?
+            SELECT  * FROM participant WHERE participant.ghost_hunter_ID=? AND participant.huntID=?
         """
         params = (session["user"]["id"], id)
         signed_up = db.execute(sql, params).fetchone()
 
 
         # Selecting the whole time, not formatting it to put in the javascript countdown. 
-        sql = "SELECT date_of_hunt AS time_of_hunt FROM reportedHunt WHERE id=?"
+        sql = "SELECT date_of_hunt AS time_of_hunt FROM reported_hunt WHERE id=?"
         params = [id,]
         row = db.execute(sql, params).fetchone()
         hunt_time = row['time_of_hunt']
@@ -434,7 +448,7 @@ def add_hunt():
 
     with connect_db() as db:
         cursor = db.execute(
-            "INSERT INTO reportedHunt (reportedBy, location, details) VALUES (?, ?, ?)",
+            "INSERT INTO reported_hunt (reported_by, location, details) VALUES (?, ?, ?)",
             (user_id, location, description),
         )
         hunt_id = cursor.lastrowid
@@ -488,15 +502,15 @@ def see_profile(id):
 
             sql = """
                 SELECT  * FROM participant AS hunts
-                LEFT JOIN reportedHunt ON hunts.huntID == reportedHunt.id
-                WHERE ghostHunterID=?
+                LEFT JOIN reported_hunt ON hunts.huntID == reported_hunt.id
+                WHERE ghost_hunter_ID=?
             """
             params = (id,)
             previous_hunts = db.execute(sql, params).fetchall()
 
             sql = """
-                SELECT  * FROM reportedHunt 
-                WHERE reportedBy=?
+                SELECT  * FROM reported_hunt 
+                WHERE reported_by=?
             """
             params = (id,)
             reported_hunts = db.execute(sql, params).fetchall()

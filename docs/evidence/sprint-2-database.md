@@ -53,7 +53,7 @@ The homepage:
 ### Changes / Improvements
 
 I decided it would be more helpful if the list was ordered based on when they were reported. 
-To fix this, I added 'ORDER BY reportedHunt.dateReported DESC' to the SQL. 
+To fix this, I added 'ORDER BY reported_hunt.date_reported DESC' to the SQL. 
 Before: 
 ![The homepage with all the hunts in the database displayed before](screenshots/homepage.png)
 
@@ -228,7 +228,7 @@ Here is a hunt set for the 12th of October at 11:55
 ### Changes / Improvements
 
 While this worked sometimes, this specific time it didn't. 
-Through further testing, I discovered that because of the Docker container the system runs through, date.today() was returning the date in UTC, but the reportedHunt date was for NZsT. 
+Through further testing, I discovered that because of the Docker container the system runs through, date.today() was returning the date in UTC, but the reported_hunt date was for NZsT. 
 
 To fix this, I converted the dates to UTC to store in the database, and made them display in local time for people elsewhere. 
 
