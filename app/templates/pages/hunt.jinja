@@ -112,10 +112,13 @@
         </script>
         </div>
       {% endif %}
+ 
+{# Status after the date has been set, and it's currently that date #}
   {% elif hunt.status == "hunting" %}
     <h1>Hunt at {{ hunt.location }}</h1>
     <h3>{{ hunt.lon }},{{ hunt.lat }}</h3>
     <h3>Hunt Participants:</h3>
+    
     <div id="participants">
       {% for participant in participants %}
         <a href="/profile/{{ participant.id }}"> - {{ participant.forename }}
@@ -124,16 +127,23 @@
         <br>
       {% endfor %}
       {% if not signed_up %}
+        
         <div id="center-me">
           <form method="post" action="/hunt/{{ hunt.hunt_id }}/join">
             <button>Join Hunt</button>
           </form>
         </div>
       {% endif %}
+    
     </div>
+    
     <h3>Hunt Location:</h3>
+    
     <div id="map"></div>
+    
     {% set location = hunt.location %}
+    
+    {# Script to make map  #}
     <script>
   var map = L.map('map').setView([0, 0], 2);
   map.setView([{{ hunt.lat }}, {{ hunt.lon }}], 13);
@@ -145,14 +155,18 @@
   marker = L.marker([{{ hunt.lat }}, {{ hunt.lon }}]).addTo(map);
 
     </script>
+    
     {% if signed_up %}
+      
       <section id="all-message">
         <h2>Hunt chat</h2>
+        
         <div id="messages">
           {% for message in messages %}
             <p data-id="{{ message.id }}" class="sent-message">{{ message.forename }} {{ message.surname }}: {{ message.body }}</p>
           {% endfor %}
         </div>
+        
         <section id="send-message">
           <form id="message_form" method="post" action="/message/{{ hunt.hunt_id }}/">
             <input type="text"
@@ -196,7 +210,7 @@
       for (const m of await res.json()) {
         const p = document.createElement("p");
         p.dataset.id = m.id;
-        p.textContent = `${m.forename} ${m.surname}: ${m.body}`; // textContent, not innerHTML
+        p.textContent = `${m.forename} ${m.surname}: ${m.body}`; 
         box.appendChild(p);
       }
     }
@@ -254,7 +268,8 @@
                    id="imageInput">
           </label>
           <div id="preview-container"></div>
-          <script>
+          {# Dropzone made w help from online recources.  #}
+          <script> 
       const dropZone = document.getElementById('dropZone');
       const input = document.getElementById('imageInput');
       const previewContainer = document.getElementById('preview-container');
@@ -314,6 +329,8 @@
     {% else %}
       <p>Only the leader can submit a report on the hunt.</p>
     {% endif %}
+    
+  {# Status 3: After the hunt report has been sent #}
   {% elif hunt.status=="Report Submitted" %}
     <h1>Hunt at {{ hunt.location }}</h1>
     <div class="div-info">

@@ -37,16 +37,16 @@ addressForm.appendChild(autofillElement);
 
     <form method="post" action="/hunt/report/send" enctype="multipart/form-data">
       
- 
+      {# Address autofill, as it pipes into OpenStreetMap API nicer. #}
       <mapbox-address-autofill access-token="pk.eyJ1IjoicGFoeWRlIiwiYSI6ImNtdTYxY2xweDAwMmcyeXEwbTNmYWE5d3MifQ.VDpgTF7gbW36oKAKm_SmWQ">
-      <input type="text" name="street" autocomplete="address-line1" placeholder="Location of ghost"/> {#Look at floating labels later if there's time. They look interesting. #}
+      <input type="text" name="street" autocomplete="address-line1" placeholder="Location of ghost"/> \
       </mapbox-address-autofill>
 
         <input type="text" name="town" autocomplete="address-level2" placeholder="Town of ghost" />
 
       <input type="text" name="country" autocomplete="country-name" placeholder="Country of ghost" />
 
-      <textarea name="description" required placeholder="Description of ghost sighting..." id="desc"></textarea>
+      <textarea name="description" required placeholder="Descrition of ghost sighting..." id="desc"></textarea>
 
 
 <label class="drop-zone" id="dropZone">

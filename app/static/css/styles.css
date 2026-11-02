@@ -149,7 +149,6 @@ h2 {
       margin-top: 1rem;
       font-size: large;
       width: 75%;
-      height: 25;
       padding-top: 0.5rem;
       padding-bottom: 0.5rem;
       padding-left: 2rem;
@@ -379,7 +378,6 @@ advanced programming techniques such as 'left'; and the infamous continuation 'r
   padding: 1rem;
   margin: 2rem;
   display: flex;
-  align-items: left;
   flex-direction: column;
   
   a {
@@ -412,9 +410,6 @@ advanced programming techniques such as 'left'; and the infamous continuation 'r
   justify-content: center;
   align-items: center;
 
-  p {
-    align-self: left;
-  }
 
 
 }
