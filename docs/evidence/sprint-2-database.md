@@ -72,7 +72,7 @@ I am testing that users can create accounts, and a new row gets inserted into th
 
 The two users that I added through the website have now been added to the database. 
 Signing up to the website: (TODO convert to GIF later. )
-![Signing up to the website](screenshots/signing_up.mov)
+![Signing up to the website](screenshots/signing_up.gif)
 
 ### Changes / Improvements
 As the system worked correctly, there was no need for any changes. 
