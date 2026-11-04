@@ -91,10 +91,10 @@ class reported_huntTable:
 
 
     SEED_DATA = """
-        INSERT INTO reported_hunt (reported_by, details, location)
+        INSERT INTO reported_hunt (reported_by, details, location,status)
         VALUES
-            (4, "I was sleeping, and then I saw my uncle, Dan Ghosthunter, standing in my window. My house is on the 2nd Floor, surrounded by trees, so it had to be a ghost 👻. Then, the next day, they found my dear Uncle Dan dead from head trauma after a significant fall outside my house. The ghost teleported him as punishment. And to think, he just got out of jail for stalking too. Poor Dan. He didn't deserve this.", "10 Ridgeview Court"),
-            (2, "TEST DATA PLEASE IGNORE", "test")
+            (4, "I was sleeping, and then I saw my uncle, Dan Ghosthunter, standing in my window. My house is on the 2nd Floor, surrounded by trees, so it had to be a ghost 👻. Then, the next day, they found my dear Uncle Dan dead from head trauma after a significant fall outside my house. The ghost teleported him as punishment. And to think, he just got out of jail for stalking too. Poor Dan. He didn't deserve this.", "10 Ridgeview Court", "hunting")
+
 
     """
 

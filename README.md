@@ -4,13 +4,16 @@
 
 This is an app that ...
 
-The app has the following key features:
-- Ghost sightings can be reported
-- Hunts can be joined
-- Ghost sightings are displayed on a map
+- Can be used to report local ghost sightings
+- Can show locations of ghost hunts
+- Can sign users up for hunts
+- Has a live chat service for users in hunts
+- Can end hunts, and have final reports sent. 
 
 
 ## Supporting Documents
+
+These docs can be viewed as a [GitHub Pages site](https://waimea-pahyde.github.io/ghost-hunting-application/)
 
 Task Instructions:
 - [Instruction documents](docs/instructions/)
@@ -23,7 +26,6 @@ Project Evidence
 - [Sprint 4: Final System Development](docs/evidence/sprint-4-final.md)
 - [Review: Project Final Review](docs/evidence/system-review.md)
 
-<!-- add github pages -->
 
 
 ## Live Site
@@ -35,14 +37,20 @@ The site is hosted on **Render.com** and can be [accessed live at this link](htt
 The following user accounts have been created to demonstrate the features of the system:
 
 Test User 1:
-- Username: xxxxx
-- Password: xxxxx
+- Username: JohnGhostHunter
+- Password: test
 
 Test User 2:
-- Username: xxxxx
-- Password: xxxxx
+- Username: hughfindsghosts
+- Password: test
 
-...
+Test User 3:
+- Username: ryanbanishesspirits
+- Password: test
+
+Test User 4:
+- Username: sharontracksghosts
+- Password: test
 
 
 ## Technologies Used

@@ -62,10 +62,10 @@
           <input type="hidden" name="date_of_hunt" id="date_of_hunt">
           <button>Submit date</button>
         </form>
-        {# Script to make sure date is in UTC. Thanks docker.  #}
+        {# Script to make sure dates are consistently in UTC. Thanks docker.  #}
         <script> 
     document.getElementById("dateForm").addEventListener("submit", () => {
-      const local = document.getElementById("local_date").value;
+      const local = document.getElementById("local_date").value;  
       document.getElementById("date_of_hunt").value = new Date(local).toISOString();
     });
         </script>
@@ -193,7 +193,8 @@
             </button>
           </form>
         </section>
-        <script>
+        {#Taken from somewhere. Script gets messages without refreshing the page to prevent unnecesary api calls.  #}
+        <script> 
     const huntId = {{ hunt.hunt_id }};
     const box = document.getElementById("messages");
     const form = document.getElementById("message_form");

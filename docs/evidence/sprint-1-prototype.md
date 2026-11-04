@@ -30,16 +30,26 @@ This is the initial database design. It includes a table for users with an optio
 
 ### Required Data Input
 
-Data that will be input may include users name, email, and password. It will also include the location in which the ghost sighting ocurred, and some basic information about the sighting.  
+Data that will be input may include users name and password. It will also include the location in which the ghost sighting ocurred, and some basic information about the sighting. The date of the hunt will have to be submitted too.
+Next action/hunt outcome information will need to be submitted by some users too. 
+
+
+Optional data input will include photos about the ghost hunt, about the sighting, and for the profile picture. Also, optional information about the user for their bio, and message bodies if the user chooses to send messages during a hunt. 
 
 ### Required Data Output
 
-Relevant ghost sightings near the ghost hunter will be required, including names of other ghost hunters going on the hunt, dates, and basic information about the ghost hunt.  
+Relevant ghost sightings near the ghost hunter will be required, including names of other ghost hunters going on the hunt, dates, and basic information about the ghost hunt. It may also be the username of the user who reported the ghost & their profile. All the information submitted about the hunt by the original hunt submitter will also be included. 
+Sent Messages for the hunt will be displayed on the page, along with their sender. 
+A list of users who are participating in the hunt will be displayed on the page
+
 
 ### Required Data Processing
 
-Co-ordinates given of the sighting will be fed into a map and displayed on the home page of my sight. 
-
+Autoincrementing participants data will be used to assign a hunt leader. 
+User-given location will be turned into co-ords
+Co-ords given of the sighting will be fed into a map and displayed on the home page of my sight. 
+Autoincrementing Status text will be changed throughout the hunt process.
+User-given password will be put through a hashing function for security.
 
 ## UI 'Flow'
 

@@ -17,17 +17,17 @@ Use complex techniques to develop a database means that, taking into account the
    - [X] **Data Types** - a range of data types used
    - [X] **Key Fields** - primary keys for each table, foreign keys for relationships
    - [X] **Values** - auto-generation / default values as required
-   - [ ] Source and structure of **Input Data** is described
-   - [ ] Type and format of **Output Data** is described
+   - [x] Source and structure of **Input Data** is described
+   - [x] Type and format of **Output Data** is described
    - [X] **Processing of Data** to achieve the output is described
 
 3. You should use appropriate tools and complex techniques to organise and query the data:
-   - [ ] **Linking data in related tables** using queries or keys
+   - [x] **Linking data in related tables** using queries or keys
    - [X] Writing **custom queries** to update the data (INSERT / UPDATE / DELETE)
 
 4. You should use appropriate tools and complex techniques to present the data:
    - [x] Creating **customised data displays from multiple tables** for web pages
-   - [ ] **Dynamically linking data** between the database and web pages
+   - [x] **Dynamically linking data** between the database and web pages
    - [x] Applying **data access permissions** as appropriate (user accounts)
 
 5. You must apply appropriate data integrity and testing procedures:
@@ -54,7 +54,7 @@ Use complex techniques to develop an informed database means **all the criteria 
 2. You should structure, organise and query your data logically:
    - [x] Your tables should be **normalised** (no repeating data)
    - [x] Your fields have the **appropriate data type**, **defaults**, etc.
-   - [ ] Your database **queries are well-written and efficient**
+   - [x] Your database **queries are well-written and efficient**
 
 
 ## Excellence Criteria
@@ -66,8 +66,8 @@ Use complex techniques to develop a refined database means **all of the criteria
    - [x ] Each iteration is **clearly documented**, showing testing and resulting refinements
 
 2. You must have used efficient tools and techniques in the system's production:
-   - [ ] You have effectively used **version control**
-   - [ ] Your git **commits are regular with descriptive commit messages**
+   - [x] You have effectively used **version control**
+   - [x] Your git **commits are regular with descriptive commit messages**
    - [x] You have **effectively used tools** like DrawSQL, Figma, VS Code, Turso SQL editor, etc. to help develop the outcome
 
 3. You present the data from the database effectively for the purpose and end users:
@@ -142,8 +142,8 @@ Use complex techniques to develop a refined digital media outcome means **all of
    - [x] Each iteration is **clearly documented**, showing testing and resulting refinements
 
 2. You have used efficient tools and techniques in the web site's production:
-   - [ ] You have effectively used **version control**
-   - [ ] You git **commits are regular with descriptive commit messages**
+   - [x] You have effectively used **version control**
+   - [x] You git **commits are regular with descriptive commit messages**
    - [x] You have **effectively used tools** like DrawSQL, Figma, VS Code, Turso SQL editor, etc. to help develop the outcome
    - [x] You have made good use of **templates** (Jinja) to organise and structure content
    - [x] Your code is **commented** as needed
